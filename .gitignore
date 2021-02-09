@@ -1,0 +1,13 @@
+out
+CMakeCache.txt
+*.vcxproj*
+*.cmake
+CMakeFiles
+Makefile
+TrackerValidation.sln
+.vs
+*~
+config.h
+freeglut.pc
+*.a
+TrackerValidation/TrackerValidation
