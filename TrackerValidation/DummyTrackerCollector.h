@@ -17,7 +17,8 @@ class DummyTrackerCollector
     void collectData();
 
   public:
-    DummyTrackerCollector(ScreenPositionStore &store);
+    DummyTrackerCollector(ScreenPositionStore &store,
+                          const TrackerConfig &config);
 };
 
 #endif // defined DUMMYTRACKERCOLLECTOR_H

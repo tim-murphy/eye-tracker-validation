@@ -241,13 +241,16 @@ void Validator::showTarget()
     setShowingTarget(true);
 }
 
-void Validator::startTrackerDataCollector(const std::string &command)
+void Validator::startTrackerDataCollector(const std::string &command,
+                                          const TrackerConfig &config)
 {
     if (trackerDataCollector != nullptr)
     {
         delete trackerDataCollector;
     }
-    trackerDataCollector = TrackerDataCollector::create(command, *gazePosition);
+    trackerDataCollector = TrackerDataCollector::create(command,
+                                                        *gazePosition,
+                                                        config);
     trackerDataCollector->run();
 }
 

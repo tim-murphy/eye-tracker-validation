@@ -17,8 +17,9 @@ class ThreadTrackerCollector
     virtual void collectData() = 0;
 
   public:
-    ThreadTrackerCollector(ScreenPositionStore &store)
-        : TrackerDataCollector(store)
+    ThreadTrackerCollector(ScreenPositionStore &store,
+                           const TrackerConfig &config)
+        : TrackerDataCollector(store, config)
     {}
 
     virtual ~ThreadTrackerCollector();

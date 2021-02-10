@@ -13,6 +13,7 @@
 
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 #ifdef _WIN32
     #include <winsock2.h>
@@ -42,11 +43,9 @@ unsigned long getTickCount()
                 std::chrono::system_clock::now().time_since_epoch()).count());
 }
 
-GPClient::GPClient(void)
+GPClient::GPClient(std::string ip_address, unsigned int ip_port)
+    : _ip_port(ip_port), _ip_address(ip_address)
 { 
-  _ip_port = 4242;
-  _ip_address = "127.0.0.1"; 
-
   // By default keep 60 records/sec * 60 seconds * 3 minutes of data
   // If we kept ALL records but never read them we could run out of memory
   _rx_buffer_size = 60*60*3;
@@ -133,7 +132,12 @@ unsigned int GPClient::GPClientThread (GPClient *ptr)
 #endif
     = inet_addr(ptr->_ip_address.c_str());
 
-  connect(ipsocket, (struct sockaddr*)&addr, sizeof (addr));
+  if (0 != connect(ipsocket, (struct sockaddr*)&addr, sizeof (addr)))
+  {
+    std::string errmsg("Could not connect to Gazepoint: ");
+    errmsg += ptr->_ip_address;
+    throw std::runtime_error(errmsg);
+  }
   
   ptr->_thread_exit = FALSE;
 
@@ -206,7 +210,10 @@ rxstr.erase(0, delimiter_index+2);
       ptr->_tx_mutex.lock();
       for (unsigned int i = 0; i < ptr->_tx_buffer.size(); i++)
       {
-        send(ipsocket, ptr->_tx_buffer.at(i).c_str(), static_cast<int>(ptr->_tx_buffer.at(i).size()), 0);
+        if (0 != send(ipsocket, ptr->_tx_buffer.at(i).c_str(), static_cast<int>(ptr->_tx_buffer.at(i).size()), MSG_NOSIGNAL))
+        {
+          std::cerr << "Socket error for msg: " << ptr->_tx_buffer.at(i) << std::endl;
+        }
       }      
       ptr->_tx_buffer.clear();
       ptr->_tx_mutex.unlock();

@@ -6,6 +6,8 @@
 
 #include "ThreadTrackerCollector.h"
 
+#include <string>
+
 class GazepointGP3Collector
     : public ThreadTrackerCollector
 {
@@ -13,8 +15,9 @@ class GazepointGP3Collector
     void collectData();
 
   public:
-    GazepointGP3Collector(ScreenPositionStore& store)
-        : ThreadTrackerCollector(store)
+    GazepointGP3Collector(ScreenPositionStore &store,
+                          const TrackerConfig &config)
+        : ThreadTrackerCollector(store, config)
     {}
 };
 

@@ -1,10 +1,12 @@
 ﻿// Gaze tracker validation system
 // Written by Tim Murphy <tim@murphy.org>
-// TODO: licence conditions here (LGPL?)
 
 #include "Validator.h"
 
+#include "TrackerConfig.h"
+
 #include <iostream>
+#include <stdexcept>
 
 int main(int argc, char *argv[])
 {
@@ -18,12 +20,28 @@ int main(int argc, char *argv[])
     unsigned int targetSize = 5;
     std::string trackerLabel = "Dummy tracker #1";
 
-    Validator v = Validator(cols, rows, repeats, targetSize, trackerLabel);
-    v.startTrackerDataCollector("GP3");
-    v.startUI(&argc, argv); // this will stop when it has finished
+    // standard configuration for Gazepoint
+    TrackerConfig gpConfig {
+        .ipAddress="127.0.0.1",
+        .ipPort=4242
+    };
 
-    // processing happens here
+    try
+    {
+        Validator v = Validator(cols, rows, repeats, targetSize, trackerLabel);
+        v.startTrackerDataCollector("GP3", gpConfig);
+        v.startUI(&argc, argv); // this will stop when it has finished
 
-    v.stopTrackerDataCollector();
+        // processing happens here
+
+        v.stopTrackerDataCollector();
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
     std::cout << "Finished! Have a nice day :)" << std::endl;
+
+    return EXIT_SUCCESS;
 }

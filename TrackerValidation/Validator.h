@@ -6,6 +6,7 @@
 
 #include "MeasuredData.h"
 #include "ScreenPositionStore.h"
+#include "TrackerConfig.h"
 #include "TrackerDataCollector.h"
 #include "ValidatorUI.h"
 
@@ -110,7 +111,8 @@ class Validator
     // start/stop the gaze tracker data collector
     // @param tracker the tracker being used in this experiment
     // @throws std::runtime_error if the tracker couldn't start
-    void startTrackerDataCollector(const std::string &tracker);
+    void startTrackerDataCollector(const std::string &tracker,
+                                   const TrackerConfig &config);
     void stopTrackerDataCollector();
 
     // a public wrapper to the cursor position setter as this may

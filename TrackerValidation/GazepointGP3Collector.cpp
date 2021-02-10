@@ -14,8 +14,6 @@
 
 void GazepointGP3Collector::collectData()
 {
-    // host: 127.0.0.1:4242
-
     // send the following to get set up:
     // <SET ID="ENABLE_SEND_COUNTER" STATE="1" />
     // <SET ID="ENABLE_SEND_POG_BEST" STATE="1" />
@@ -27,8 +25,8 @@ void GazepointGP3Collector::collectData()
     // note: if BPOGV == 1 means the measurement is valid, 0 means invalid
     //       and the BPOG[X|Y] values are the last known values.
 
-	GPClient client;
-	client.client_connect();
+    GPClient client(config.ipAddress, config.ipPort);
+    client.client_connect();
 
     // screen config
     std::pair<unsigned int, unsigned int> screenRes = ValidatorUI::getScreenRes();
@@ -38,9 +36,9 @@ void GazepointGP3Collector::collectData()
                  << screenRes.second << "\" />";
 
     client.send_cmd(screenConfig.str());
-	client.send_cmd("<SET ID=\"ENABLE_SEND_COUNTER\" STATE=\"1\" />");
-	client.send_cmd("<SET ID=\"ENABLE_SEND_POG_BEST\" STATE=\"1\" />");
-	client.send_cmd("<SET ID=\"ENABLE_SEND_DATA\" STATE=\"1\" />");
+    client.send_cmd("<SET ID=\"ENABLE_SEND_COUNTER\" STATE=\"1\" />");
+    client.send_cmd("<SET ID=\"ENABLE_SEND_POG_BEST\" STATE=\"1\" />");
+    client.send_cmd("<SET ID=\"ENABLE_SEND_DATA\" STATE=\"1\" />");
 
     while (isRunning())
     {
@@ -84,7 +82,7 @@ void GazepointGP3Collector::collectData()
         catch (std::exception &e)
         {
             // don't crash on exceptions, just try again
-            std::cerr << e.what() << std::endl;
+            std::cerr << "Error: " << e.what() << std::endl;
         }
     }
 }

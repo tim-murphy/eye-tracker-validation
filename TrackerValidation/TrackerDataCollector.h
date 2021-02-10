@@ -6,6 +6,8 @@
 
 #include "ScreenPositionStore.h"
 
+#include "TrackerConfig.h"
+
 #include <string>
 #include <thread>
 
@@ -17,14 +19,19 @@ class TrackerDataCollector
     // storage object for the current screen position
     ScreenPositionStore &position;
 
+    // tracker configuration data
+    const TrackerConfig &config;
+
     // is the data collector process running?
     bool processRunning;
 
-    TrackerDataCollector(ScreenPositionStore& store);
+    TrackerDataCollector(ScreenPositionStore& store,
+                         const TrackerConfig &config);
 
   public:
     static TrackerDataCollector *create(const std::string &tracker,
-                                        ScreenPositionStore &store);
+                                        ScreenPositionStore &store,
+                                        const TrackerConfig &config);
 
     // Start the data collector process. If it is already running, this will
     // do nothing.

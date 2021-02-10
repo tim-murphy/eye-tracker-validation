@@ -36,11 +36,8 @@ private:
   bool _connected_status;
 
 public:
-  GPClient(void);
+  GPClient(std::string ip_address="127.0.0.1", unsigned int ip_port=4242);
   ~GPClient(void);
-
-  void set_address (std::string address) {_ip_address = address;} // set server IP address
-  void set_port (unsigned int port) {_ip_port = port;} // set server IP port
 
   void client_connect ();
   void client_disconnect ();

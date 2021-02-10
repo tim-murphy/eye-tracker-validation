@@ -9,8 +9,9 @@
 
 #include <stdexcept>
 
-TrackerDataCollector::TrackerDataCollector(ScreenPositionStore &store)
-    : position(store), processRunning(false)
+TrackerDataCollector::TrackerDataCollector(ScreenPositionStore &store,
+                                           const TrackerConfig &config)
+    : position(store), processRunning(false), config(config)
 { }
 
 bool TrackerDataCollector::isRunning() const
@@ -19,15 +20,17 @@ bool TrackerDataCollector::isRunning() const
 }
 
 TrackerDataCollector *TrackerDataCollector::create(
-    const std::string &tracker, ScreenPositionStore &store)
+    const std::string &tracker,
+    ScreenPositionStore &store,
+    const TrackerConfig &config)
 {
     if (tracker == "dummy")
     {
-        return new DummyTrackerCollector(store);
+        return new DummyTrackerCollector(store, config);
     }
     else if (tracker == "GP3" || tracker == "gp3")
     {
-        return new GazepointGP3Collector(store);
+        return new GazepointGP3Collector(store, config);
     }
     else
     {

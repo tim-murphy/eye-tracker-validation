@@ -15,14 +15,16 @@
     } POINT;
     bool GetCursorPos(POINT *pt)
     {
+        // XQueryPointer
         pt->x = 100;
         pt->y = 300;
         return true;
     }
 #endif
 
-DummyTrackerCollector::DummyTrackerCollector(ScreenPositionStore &store)
-    : ThreadTrackerCollector(store)
+DummyTrackerCollector::DummyTrackerCollector(ScreenPositionStore &store,
+                                             const TrackerConfig &config)
+    : ThreadTrackerCollector(store, config)
 { }
 
 void DummyTrackerCollector::collectData()
