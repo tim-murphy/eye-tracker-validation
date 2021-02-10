@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     try
     {
         Validator v = Validator(cols, rows, repeats, targetSize, trackerLabel);
-        v.startTrackerDataCollector("GP3", gpConfig);
+        v.startTrackerDataCollector("dummy", gpConfig);
         v.startUI(&argc, argv); // this will stop when it has finished
 
         // processing happens here

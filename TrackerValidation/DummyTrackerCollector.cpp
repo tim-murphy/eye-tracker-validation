@@ -9,15 +9,32 @@
     #include <Windows.h>
     #include <WinUser.h>
 #else
+    #include <X11/Xlib.h>
+
     typedef struct POINT {
         unsigned int x;
         unsigned int y;
     } POINT;
     bool GetCursorPos(POINT *pt)
     {
-        // XQueryPointer
-        pt->x = 100;
-        pt->y = 300;
+        Window root, child;
+        int screenX, screenY, windowX, windowY;
+        unsigned int mask;
+        Display *disp = XOpenDisplay(nullptr);
+        if (XQueryPointer(disp, DefaultRootWindow(disp), &root, &child,
+            &screenX, &screenY, &windowX, &windowY, &mask))
+        {
+            pt->x = screenX;
+            pt->y = screenY;
+        }
+        else
+        {
+            // could not determine mouse pointer
+            pt->x = 0;
+            pt->y = 0;
+        }
+        XCloseDisplay(disp);
+        
         return true;
     }
 #endif
