@@ -1,4 +1,4 @@
-# Eye Tracker Validator
+# Eye Tracker Validation
 
 This software is a free, open-source tool which can be used to validate the
 accuracy and precision of an eye tracker system. The tool works on both Windows
