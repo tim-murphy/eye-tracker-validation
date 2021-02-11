@@ -27,9 +27,9 @@ libraries. To install on a debian-based system, use the following:
 
 ```sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libxi-dev```
 
-If you don't have `cmake` or a C++ compiler installed, you'll need these too:
+If you don't have `cmake` or C/C++ compilers installed, you'll need these too:
 
-```sudo apt-get install -y cmake make g++```
+```sudo apt-get install -y build-essential cmake```
 
 ## Build
 Since this project uses `cmake`, your build tool can change depending on your
