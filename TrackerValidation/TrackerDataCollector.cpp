@@ -24,7 +24,7 @@ TrackerDataCollector *TrackerDataCollector::create(
     ScreenPositionStore &store,
     const TrackerConfig &config)
 {
-    if (tracker == "dummy")
+    if (tracker == "mouse" || tracker == "dummy")
     {
         return new DummyTrackerCollector(store, config);
     }
