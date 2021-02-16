@@ -210,7 +210,12 @@ rxstr.erase(0, delimiter_index+2);
       ptr->_tx_mutex.lock();
       for (unsigned int i = 0; i < ptr->_tx_buffer.size(); i++)
       {
-        if (0 != send(ipsocket, ptr->_tx_buffer.at(i).c_str(), static_cast<int>(ptr->_tx_buffer.at(i).size()), MSG_NOSIGNAL))
+        // unix systems will raise SIGPIPE if we try to write to a closed buffer. Windows will not.
+        int flags = 0;
+        #ifndef _WIN32
+            flags = MSG_NOSIGNAL;
+        #endif // not defined _WIN32
+        if (0 != send(ipsocket, ptr->_tx_buffer.at(i).c_str(), static_cast<int>(ptr->_tx_buffer.at(i).size()), flags))
         {
           std::cerr << "Socket error for msg: " << ptr->_tx_buffer.at(i) << std::endl;
         }

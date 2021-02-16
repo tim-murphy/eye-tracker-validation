@@ -5,11 +5,12 @@
 
 #include "TrackerConfig.h"
 
-#include <getopt.h>
 #include <iostream>
 #include <stdexcept>
 
 #ifndef _WIN32
+#include <getopt.h>
+
 // TODO get default values dynamically
 void printUsage(const char * const cmd)
 {
@@ -22,7 +23,7 @@ void printUsage(const char * const cmd)
               << "--label <s>    label for this experiment (default \"dummy\")" << std::endl
               << "--system <s>   the system under test (\"mouse\" (default) or \"GP3\")" << std::endl;
 }
-#endif // defined _WIN32
+#endif // not defined _WIN32
 
 int main(int argc, char *argv[])
 {
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
         printUsage(argv[0]);
         return EXIT_FAILURE;
     }
-#endif // defined _WIN32
+#endif // not defined _WIN32
 
     std::cout << "Using config:" << std::endl
               << "  cols=" << cols << std::endl
@@ -106,10 +107,9 @@ int main(int argc, char *argv[])
               << "  system=" << system << std::endl;
 
     // standard configuration for Gazepoint
-    TrackerConfig gpConfig {
-        .ipAddress="127.0.0.1",
-        .ipPort=4242
-    };
+    TrackerConfig gpConfig;
+    gpConfig.ipAddress = "127.0.0.1";
+    gpConfig.ipPort = 4242;
 
     try
     {
