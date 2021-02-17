@@ -3,7 +3,7 @@
 
 #include "Validator.h"
 
-#include "ManualScreenPosition.h"
+#include "ScreenPositionStore.h"
 #include "MeasuredDataStream.h"
 #include "ValidatorUIOpenGL.h"
 
@@ -23,9 +23,9 @@ Validator::Validator(unsigned int columns,
       trackerLabel(trackerLabel), showingTarget(false), targetIndex(0),
       trackerDataCollector(nullptr)
 {
-    cursorPosition = new ManualScreenPosition();
-    gazePosition = new ManualScreenPosition();
-    targetPosition = new ManualScreenPosition();
+    cursorPosition = new ScreenPositionStore();
+    gazePosition = new ScreenPositionStore();
+    targetPosition = new ScreenPositionStore();
     dimensions = std::make_pair(columns, rows);
 
     // initialise the test counts

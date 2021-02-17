@@ -1,7 +1,7 @@
-// Abstract class for a storage class of screen (x,y) pixel coordinates.
+// Class for manual storage of screen (x,y) pixel coordinates.
 // The source of this data could be a TCP stream, FIFO, file, etc.
 // This is defined as a "store" as it refers to the last known value.
-// Written by Tim Murphy <tim@murphy.org>
+// Written by Tim Murphy <tim@murphy.org> 2021
 
 #ifndef SCREENPOSITIONSTORE_H
 #define SCREENPOSITIONSTORE_H
@@ -22,9 +22,6 @@ class ScreenPositionStore
     // retrieve the stored values
     std::pair<unsigned int, unsigned int> getCurrentPosition() const;
     double getIdentifier() const;
-
-    // calculate the data and store it
-    virtual void setCurrentPosition() = 0;
 
     // set the position with (x, y) co-ordinates
     void setCurrentPosition(std::pair<unsigned int, unsigned int> pos,
