@@ -51,8 +51,8 @@ To compile, run:
 
 Note that if you don't add/remove any source code, libraries or other
 dependencies, then you only need to run `make` after each code change. If you
-_do_ change dependencies, you'll need to edit the `CMakeLists.txt` file and
-run run `cmake .` from the root directory again.
+_do_ change dependencies, you'll need to run `cmake .` from the root directory
+again.
 
 # Design Overview
 ![High-level Overview](./docs/diagrams/Tracker_validation_flowchart.svg)
