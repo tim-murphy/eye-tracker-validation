@@ -53,8 +53,9 @@ void GazepointGP3Collector::collectData()
                 "^<REC CNT=\"(\\d+)\" BPOGX=\"([01]\\.\\d+)\" BPOGY=\"([01]\\.\\d+)\" BPOGV=\"1\" />$");
             std::smatch matches;
 
-            // FIXME regex_match throws a read access violation when the main
-            // thread finishes but this is still running
+            // regex_match throws a read access violation when the main
+            // thread finishes but this is still running. This is caught below
+            // and ignored - if we're exiting then there's nothing to recover
             if (std::regex_match(rxstr, matches, r))
             {
                 // x,y values are a fraction of the screen size. These are

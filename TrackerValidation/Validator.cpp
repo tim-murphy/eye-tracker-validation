@@ -120,8 +120,15 @@ bool Validator::recordMeasurement()
 
     std::chrono::time_point<std::chrono::system_clock> currTime
         = std::chrono::system_clock::now();
+
+    // lock both objects together - we want the data to be as close
+    // as we can
+    gazePosition->lock();
+    cursorPosition->lock();
     std::pair<unsigned int, unsigned int>tPos = getTargetPos();
     std::pair<unsigned int, unsigned int>cPos = getGazePos();
+    gazePosition->unlock();
+    cursorPosition->unlock();
 
     if (data->writeData(currTime, getTargetIndex(),
                         tPos.first, tPos.second,

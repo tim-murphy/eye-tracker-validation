@@ -19,8 +19,10 @@ std::pair<unsigned int, unsigned int>
 void ScreenPositionStore::setCurrentPosition(
     std::pair<unsigned int, unsigned int> pos, double id)
 {
+    lock();
     currentPos = pos;
     identifier = id;
+    unlock();
 }
 
 double ScreenPositionStore::getIdentifier() const
@@ -34,4 +36,14 @@ std::ostream &operator<<(std::ostream &os,
     std::pair<unsigned int, unsigned int> pos = store.getCurrentPosition();
     os << "(" << pos.first << "," << pos.second << ")";
     return os;
+}
+
+void ScreenPositionStore::lock(void)
+{
+    posMutex.lock();
+}
+
+void ScreenPositionStore::unlock(void)
+{
+    posMutex.unlock();
 }
