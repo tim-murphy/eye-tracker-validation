@@ -4,6 +4,10 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+// for operator<< for std::pair
+#include <iosfwd>
+#include <utility>
+
 namespace common
 {
 
@@ -12,4 +16,8 @@ constexpr double pi = 3.14159265358979323846264338327950288419716939937510582097
 
 } // end namespace common
 
-#endif // COMMON_H
+// operator overloads need to live out of the namespace
+template<typename T1, typename T2>
+std::ostream &operator<<(std::ostream &os, const std::pair<T1, T2> &p);
+
+#endif // not defined COMMON_H

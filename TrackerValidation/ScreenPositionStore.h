@@ -6,6 +6,7 @@
 #ifndef SCREENPOSITIONSTORE_H
 #define SCREENPOSITIONSTORE_H
 
+#include <iosfwd> // for operator<<
 #include <utility> // for std::pair
 
 class ScreenPositionStore
@@ -26,6 +27,9 @@ class ScreenPositionStore
     // set the position with (x, y) co-ordinates
     void setCurrentPosition(std::pair<unsigned int, unsigned int> pos,
                             double id = 0.0);
+
+    friend std::ostream &operator<<(std::ostream &os,
+                                    const ScreenPositionStore &store);
 };
 
-#endif // defined SCREENPOSITIONSTORE_H
+#endif // not defined SCREENPOSITIONSTORE_H

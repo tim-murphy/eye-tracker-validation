@@ -3,6 +3,8 @@
 
 #include "ScreenPositionStore.h"
 
+#include <iostream> // for operator<<
+
 std::pair<unsigned int, unsigned int>
     ScreenPositionStore::getCurrentPosition() const
 {
@@ -19,4 +21,12 @@ void ScreenPositionStore::setCurrentPosition(
 double ScreenPositionStore::getIdentifier() const
 {
     return identifier;
+}
+
+std::ostream &operator<<(std::ostream &os,
+                         const ScreenPositionStore &store)
+{
+    std::pair<unsigned int, unsigned int> pos = store.getCurrentPosition();
+    os << "(" << pos.first << "," << pos.second << ")";
+    return os;
 }

@@ -3,6 +3,7 @@
 #
 cmake_minimum_required(VERSION 3.8)
 project(TrackerValidation LANGUAGES CXX VERSION 0.1)
+enable_testing()
 
 add_compile_definitions(FREEGLUT_BUILD_STATIC_LIBS)
 
@@ -12,16 +13,40 @@ if (POLICY CMP0072)
 endif(POLICY CMP0072)
 find_package(OpenGL)
 
+# Note: CMake documentation says using GLOB for sources is not best practice
+#       as CMakeLists.txt is not updated when files are added/removed. That
+#       said, maintaining files in two places (in the directory and here) is
+#       unnecessary duplication. Any issues will be caught by the CI system
+#       anyway, so let's keep it simple.
+file(GLOB SOURCES "*.cpp")
+file(GLOB MAINSRC "TrackerValidation.cpp")
+list(REMOVE_ITEM SOURCES ${MAINSRC})
+
+set(MAINEXE "TrackerValidation")
+set(SOURCESLIB "validator_static")
+
+# Create a static library of all sources except main - makes testing easier.
+add_library(${SOURCESLIB} STATIC ${SOURCES})
+
 # Add source to this project's executable.
-add_executable(TrackerValidation "TrackerValidation.cpp"  "Validator.h" "MeasuredData.h"  "Validator.cpp" "MeasuredDataStream.h" "MeasuredDataStream.cpp" "MeasuredData.cpp" "ScreenPositionStore.h" "ValidatorUI.h" "ValidatorUI.cpp" "ValidatorUIOpenGL.h" "ValidatorUIOpenGL.cpp" "ScreenPositionStore.cpp" "common.h" "TrackerDataCollector.h" "TrackerDataCollector.cpp" "DummyTrackerCollector.h" "DummyTrackerCollector.cpp" "ThreadTrackerCollector.h" "ThreadTrackerCollector.cpp" "GazepointGP3Collector.h" "GazepointGP3Collector.cpp" "TrackerConfig.h")
+add_executable(${MAINEXE} ${MAINSRC})
+target_link_libraries(${MAINEXE} ${SOURCESLIB})
 
 add_subdirectory("gazepoint")
 add_subdirectory("freeglut-3.2.1")
-target_include_directories(TrackerValidation PUBLIC "freeglut-3.2.1/include")
-target_link_libraries(TrackerValidation "GPClient")
-target_link_libraries(TrackerValidation "freeglut_static")
+target_include_directories(${SOURCESLIB} PUBLIC "freeglut-3.2.1/include")
+target_link_libraries(${MAINEXE} "GPClient")
+target_link_libraries(${MAINEXE} "freeglut_static")
 
-find_package(Threads)
-target_link_libraries(TrackerValidation ${CMAKE_THREAD_LIBS_INIT})
+find_package(Threads REQUIRED)
+target_link_libraries(${MAINEXE} ${CMAKE_THREAD_LIBS_INIT})
 
-# TODO: Add tests and install targets if needed.
+# unittests
+set(TESTEXE "unittests")
+file(GLOB TESTSRC "test/*.cpp")
+add_executable(${TESTEXE} ${TESTSRC})
+target_link_libraries(${TESTEXE} ${SOURCESLIB})
+add_test(UnitTests ${TESTEXE})
+add_test(CompileTests "${CMAKE_COMMAND}" --build "${CMAKE_SOURCES_DIR}" --target "${TESTEXE}")
+SET_TESTS_PROPERTIES(UnitTests PROPERTIES DEPENDS CompileTests)
+
