@@ -20,6 +20,9 @@ class ScreenPositionStore
     double identifier;
 
   public:
+    ScreenPositionStore(std::pair<unsigned int, unsigned int> pos = std::make_pair(0,0),
+                        double id = 0.0);
+
     // retrieve the stored values
     std::pair<unsigned int, unsigned int> getCurrentPosition() const;
     double getIdentifier() const;

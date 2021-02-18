@@ -5,6 +5,11 @@
 
 #include <iostream> // for operator<<
 
+ScreenPositionStore::ScreenPositionStore(std::pair<unsigned int, unsigned int> pos,
+                                         double id)
+    : currentPos(pos), identifier(id)
+{}
+
 std::pair<unsigned int, unsigned int>
     ScreenPositionStore::getCurrentPosition() const
 {
