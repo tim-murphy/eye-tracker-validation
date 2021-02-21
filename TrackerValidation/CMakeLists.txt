@@ -6,6 +6,7 @@ project(TrackerValidation LANGUAGES CXX VERSION 0.1)
 enable_testing()
 
 add_compile_definitions(FREEGLUT_BUILD_STATIC_LIBS)
+add_compile_definitions(FREEGLUT_STATIC)
 
 # OpenGL policy - use GLVND instead of LEGACY
 if (POLICY CMP0072)
