@@ -22,7 +22,7 @@ Validator::Validator(unsigned int columns,
                      std::string trackerLabel)
     : reps(repeats), targSize(targetSize), ui(nullptr), data(nullptr),
       trackerLabel(trackerLabel), showingTarget(false), targetIndex(0),
-      trackerDataCollector(nullptr)
+      trackerDataCollector(nullptr), targType(targetType)
 {
     cursorPosition = new ScreenPositionStore();
     gazePosition = new ScreenPositionStore();
@@ -86,7 +86,8 @@ void Validator::startUI(int *argcp, char **argvp)
     // just in case - for normal use this should not be initialised
     delete ui;
 
-    ui = new ValidatorUIOpenGL(getTargetSize(), argcp, argvp);
+    ui = new ValidatorUIOpenGL(getTargetSize(), getTargetType(),
+                               argcp, argvp);
     ui->setIdleFunc(&idleFunc);
     ui->setMouseFunc(&onClickFunc);
     ui->run();
@@ -338,6 +339,11 @@ unsigned int Validator::getReps() const
 unsigned int Validator::getTargetSize() const
 {
     return targSize;
+}
+
+const std::string &Validator::getTargetType() const
+{
+    return targType;
 }
 
 const std::pair<unsigned int, unsigned int> &Validator::getDimensions() const

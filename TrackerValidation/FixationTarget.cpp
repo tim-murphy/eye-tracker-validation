@@ -4,6 +4,7 @@
 #include "FixationTarget.h"
 
 #include "CircleTarget.h"
+#include "CrosshairBullseyeTarget.h"
 
 #include <stdexcept>
 
@@ -22,6 +23,10 @@ FixationTarget *FixationTarget::create(const std::string &type,
     if (type == "circle")
     {
         return new CircleTarget(diameter);
+    }
+    else if (type == "crosshairbullseye" || type == "cbe")
+    {
+        return new CrosshairBullseyeTarget(diameter);
     }
     else
     {

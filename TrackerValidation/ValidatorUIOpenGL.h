@@ -16,14 +16,13 @@ class ValidatorUIOpenGL : public ValidatorUI
     static void resize(int width, int height);
     static void showSplashScreen();
 
-    // draw a circle at pixel location (x, y) with the given radius
-    // using trianges.
-    // @param segments number of trianges to use to draw the circle
-    static void drawCircle(unsigned int x, unsigned int y,
-                           unsigned int diameter);
+    // draw a target at pixel location (x, y) with the given radius.
+    void drawTarget(unsigned int x, unsigned int y,
+                    unsigned int diameter);
 
   public:
-    ValidatorUIOpenGL(unsigned int targetSize, int *argcp, char **argvp);
+    ValidatorUIOpenGL(unsigned int targetSize, const std::string &targType,
+                      int *argcp, char **argvp);
 
     // set the idle routine (main processing)
     void setIdleFunc(void (*func)(void));

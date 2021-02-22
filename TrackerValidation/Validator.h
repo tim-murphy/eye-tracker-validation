@@ -136,6 +136,7 @@ class Validator
     // -- getters and setters -- //
     unsigned int getReps() const;
     unsigned int getTargetSize() const;
+    const std::string &getTargetType() const;
     const std::pair<unsigned int, unsigned int> &getDimensions() const;
     unsigned int getTargetIndex() const;
     const std::string &getTrackerLabel() const;

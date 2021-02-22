@@ -14,8 +14,7 @@
 // -- UI static functions -- //
 void ValidatorUIOpenGL::drawScreen()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
+    // nothing to do here
 }
 
 bool ValidatorUIOpenGL::fullscreen = false;
@@ -34,6 +33,7 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
             std::cout << "Changing to full-screen mode" << std::endl;
             glutReshapeWindow(getScreenRes().first, getScreenRes().second);
             glutFullScreen();
+            glutSwapBuffers();
             fullscreen = true;
         }
         break;
@@ -81,11 +81,11 @@ bool ValidatorUIOpenGL::mouseClickEvent(int button, int state)
     return (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN);
 }
 
-void ValidatorUIOpenGL::drawCircle(unsigned int x, unsigned int y,
+void ValidatorUIOpenGL::drawTarget(unsigned int x, unsigned int y,
                                    unsigned int diameter)
 {
     std::unique_ptr<FixationTarget> t(
-        FixationTarget::create("circle", diameter));
+        FixationTarget::create(getTargetType(), diameter));
     t->drawOpenGL(x, y);
 }
 std::pair<double, double> ValidatorUIOpenGL::pixelToPosition(unsigned int x,
@@ -100,8 +100,8 @@ std::pair<double, double> ValidatorUIOpenGL::pixelToPosition(unsigned int x,
     //  So returned value would be (-0.80, 0.74)
     std::pair<unsigned int, unsigned int> res = getScreenRes();
     double xPos = 2 * (static_cast<double>(x)
-                  / static_cast<double>(res.first)) - 1;
-    double yPos = 1 - (2 * (static_cast<double>(y)
+                  / static_cast<double>(res.first)) - 1.0;
+    double yPos = 1.0 - (2 * (static_cast<double>(y)
                   / static_cast<double>(res.second)));
 
     return std::make_pair(xPos, yPos);
@@ -110,8 +110,9 @@ std::pair<double, double> ValidatorUIOpenGL::pixelToPosition(unsigned int x,
 // -- end UI static functions --//
 
 ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
+                                     const std::string &targetType,
                                      int *argcp, char **argvp)
-    : ValidatorUI(targetSize)
+    : ValidatorUI(targetSize, targetType)
 {
     static constexpr std::pair<int, int> windowRes = std::make_pair(640, 480);
 
@@ -155,7 +156,7 @@ void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos)
         return;
     }
 
-    drawCircle(pos.first, pos.second, getTargetSize());
+    drawTarget(pos.first, pos.second, getTargetSize());
 
     glutSwapBuffers();
 }

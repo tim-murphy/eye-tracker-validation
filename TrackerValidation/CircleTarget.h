@@ -19,4 +19,4 @@ class CircleTarget : public FixationTarget
     void drawOpenGL(unsigned int x, unsigned int y);
 };
 
-#endif // defined CIRCLETARGET_H
+#endif // not defined CIRCLETARGET_H

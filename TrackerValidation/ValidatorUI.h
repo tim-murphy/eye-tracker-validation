@@ -4,19 +4,22 @@
 #ifndef VALIDATORUI_H
 #define VALIDATORUI_H
 
+#include <string>
 #include <utility> // for std::pair
 
 class ValidatorUI
 {
   private:
     unsigned int targSize;
+    std::string targType;
     static std::pair<unsigned int, unsigned int> screenRes;
 
     // calculate the screen resolution.
     static void setScreenRes();
 
   public:
-    ValidatorUI(unsigned int targetSize);
+    ValidatorUI(unsigned int targetSize,
+                const std::string &targetType);
 
     // display the target at the given (x,y) pixel location.
     virtual void showTarget(std::pair<unsigned int, unsigned int> pos) = 0;
@@ -39,6 +42,7 @@ class ValidatorUI
 
     // -- getters and setters -- //
     unsigned int getTargetSize() const;
+    const std::string &getTargetType() const;
     static const std::pair<unsigned int, unsigned int> &getScreenRes();
 };
 

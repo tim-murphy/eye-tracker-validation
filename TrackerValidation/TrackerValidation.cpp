@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
     unsigned int cols = 5;
     unsigned int rows = 3;
     unsigned int repeats = 5;
-    unsigned int targetSize = 5;
-    std::string targType = "circle";
+    unsigned int targetSize = 6;
+    std::string targType = "crosshairbullseye";
     std::string trackerLabel = "dummy";
     std::string system = "mouse";
 
