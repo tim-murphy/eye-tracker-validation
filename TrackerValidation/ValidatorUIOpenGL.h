@@ -16,15 +16,11 @@ class ValidatorUIOpenGL : public ValidatorUI
     static void resize(int width, int height);
     static void showSplashScreen();
 
-    // convert pixel location into OpenGL relative position [-1.0, 1.0]
-    static std::pair<double, double> pixelToPosition(unsigned int x,
-                                                     unsigned int y);
-
     // draw a circle at pixel location (x, y) with the given radius
     // using trianges.
     // @param segments number of trianges to use to draw the circle
     static void drawCircle(unsigned int x, unsigned int y,
-                           double diameter, unsigned int segments=32);
+                           unsigned int diameter);
 
   public:
     ValidatorUIOpenGL(unsigned int targetSize, int *argcp, char **argvp);
@@ -45,6 +41,10 @@ class ValidatorUIOpenGL : public ValidatorUI
     // mouseclick event helpers - check if button/state combination is
     // considered a valid mouse click
     static bool mouseClickEvent(int button, int state);
+
+    // convert pixel location into OpenGL relative position [-1.0, 1.0]
+    static std::pair<double, double> pixelToPosition(
+        unsigned int x, unsigned int y);
 };
 
 # endif // defined VALIDATORUIOPENGL_H

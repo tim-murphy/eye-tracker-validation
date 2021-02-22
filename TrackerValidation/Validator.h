@@ -34,6 +34,9 @@ class Validator
     // How many times are we testing each point?
     unsigned int reps;
 
+    // what type of target are we using?
+    std::string targType;
+
     // How big is the target? This is a diameter in pixels.
     unsigned int targSize;
 
@@ -90,11 +93,13 @@ class Validator
     // @param columns number of columns to split the screen into
     // @param rows the number of rows to split the screen into
     // @param repeats the number of times each cell is tested
+    // @param targetType type of target to use (e.g. circle)
     // @param targetSize the diameter of the circular target, in pixels
     // @param trackerLabel a descriptive label written with the data
     Validator(unsigned int columns,
               unsigned int rows,
               unsigned int repeats,
+              std::string targetType,
               unsigned int targetSize,
               std::string trackerLabel);
 

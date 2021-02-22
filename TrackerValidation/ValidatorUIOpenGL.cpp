@@ -4,10 +4,11 @@
 #include "ValidatorUIOpenGL.h"
 
 #include "common.h"
+#include "FixationTarget.h"
 
-#include <cmath>
 #include <GL/freeglut.h>
 #include <iostream>
+#include <memory>
 #include <thread>
 
 // -- UI static functions -- //
@@ -81,30 +82,11 @@ bool ValidatorUIOpenGL::mouseClickEvent(int button, int state)
 }
 
 void ValidatorUIOpenGL::drawCircle(unsigned int x, unsigned int y,
-                                   double diameter, unsigned int segments)
+                                   unsigned int diameter)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor4d(1.0, 1.0, 1.0, 1.0);
-    glBegin(GL_TRIANGLE_FAN);
-
-    double radius = diameter / 2.0;
-
-    std::pair<double, double> centerPos = pixelToPosition(x, y);
-    glVertex2d(centerPos.first, centerPos.second);
-
-    for (double n = 0; n <= segments; ++n)
-    {
-        // the angle used for this triangle segment
-        double sigma = n * common::pi * 2.0 / static_cast<double>(segments);
-
-        std::pair<double, double> pos = pixelToPosition(
-            static_cast<unsigned int>(x + (radius * cos(sigma))),
-            static_cast<unsigned int>(y + (radius * sin(sigma))));
-
-        glVertex2d(pos.first, pos.second);
-    }
-
-    glEnd();
+    std::unique_ptr<FixationTarget> t(
+        FixationTarget::create("circle", diameter));
+    t->drawOpenGL(x, y);
 }
 std::pair<double, double> ValidatorUIOpenGL::pixelToPosition(unsigned int x,
                                                              unsigned int y)

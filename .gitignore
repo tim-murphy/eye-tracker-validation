@@ -10,3 +10,4 @@ TrackerValidation.sln
 config.h
 freeglut.pc
 *.a
+/CMakeSettings.json

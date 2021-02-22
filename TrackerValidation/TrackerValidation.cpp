@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     unsigned int rows = 3;
     unsigned int repeats = 5;
     unsigned int targetSize = 5;
+    std::string targType = "circle";
     std::string trackerLabel = "dummy";
     std::string system = "mouse";
 
@@ -103,6 +104,7 @@ int main(int argc, char *argv[])
               << "  rows=" << rows << std::endl
               << "  repeats=" << repeats << std::endl
               << "  targsize=" << targetSize << std::endl
+              << "  targType=" << targType << std::endl
               << "  label=" << trackerLabel << std::endl
               << "  system=" << system << std::endl;
 
@@ -113,7 +115,8 @@ int main(int argc, char *argv[])
 
     try
     {
-        Validator v = Validator(cols, rows, repeats, targetSize, trackerLabel);
+        Validator v = Validator(cols, rows, repeats,
+                                targType, targetSize, trackerLabel);
         v.startTrackerDataCollector(system, gpConfig);
         v.startUI(&argc, argv); // this will stop when it has finished
 

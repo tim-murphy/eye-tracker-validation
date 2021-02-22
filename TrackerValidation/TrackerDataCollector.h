@@ -29,6 +29,8 @@ class TrackerDataCollector
                          const TrackerConfig &config);
 
   public:
+    // create a data collector of the type defined in tracker.
+    // throws std::runtime_error if tracker does not match any known type.
     static TrackerDataCollector *create(const std::string &tracker,
                                         ScreenPositionStore &store,
                                         const TrackerConfig &config);

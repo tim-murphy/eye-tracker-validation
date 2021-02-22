@@ -17,6 +17,7 @@
 Validator::Validator(unsigned int columns,
                      unsigned int rows,
                      unsigned int repeats,
+                     std::string targetType,
                      unsigned int targetSize,
                      std::string trackerLabel)
     : reps(repeats), targSize(targetSize), ui(nullptr), data(nullptr),
