@@ -26,6 +26,7 @@ void printUsage(const char * const cmd)
               << "--label <s>    label for this experiment (default \"dummy\")" << std::endl
               << "--system <s>   the system under test (\"mouse\" (default) or \"GP3\")" << std::endl;
 }
+
 #else // if _WIN32 is defined
 
 void printUsage(const char * const cmd)
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
         switch (opt)
         {
           case '?': // invalid argument
-            std::cerr << "Error: Invalid argument: " << cmdOpts[longIndex].name << std::endl;
+            // this prints an error message by default, no need to do it again
             configSuccess = false;
             break;
           case ':': // missing value
@@ -92,7 +93,12 @@ int main(int argc, char *argv[])
             configSuccess = false;
             break;
           default:
-            cmdArgs[cmdOpts[longIndex].name] = optarg;
+            std::string val = "";
+            if (optarg != nullptr)
+            {
+                val = optarg;
+            }
+            cmdArgs[cmdOpts[longIndex].name] = val;
         }
     }
 #else // if _WIN32 is defined
