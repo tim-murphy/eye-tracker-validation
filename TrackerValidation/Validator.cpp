@@ -235,7 +235,7 @@ void Validator::showTarget()
         randomIndex = rand() % testCount.size();
     } while (testCount[randomIndex] >= getReps());
 
-    { // temporary debug block
+    { // FIXME temporary debug block
         std::pair<unsigned int, unsigned int> colRowPair
             = indexToColRow(randomIndex);
 

@@ -6,6 +6,7 @@
 #include "TrackerConfig.h"
 
 #include <iostream>
+#include <map>
 #include <stdexcept>
 
 #ifndef _WIN32
@@ -19,9 +20,26 @@ void printUsage(const char * const cmd)
               << "--cols <n>     split screen into <n> columns (default 3)" << std::endl
               << "--rows <n>     split screen into <n> rows (default 3)" << std::endl
               << "--repeats <n>  number of times to test each point (default 5)" << std::endl
+              << "--targtype <s> the type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
+              << "                 (default \"crosshairbullseye\")" << std::endl
               << "--targsize <n> diameter of target in pixels (default 5)" << std::endl
               << "--label <s>    label for this experiment (default \"dummy\")" << std::endl
               << "--system <s>   the system under test (\"mouse\" (default) or \"GP3\")" << std::endl;
+}
+#else // if _WIN32 is defined
+
+void printUsage(const char * const cmd)
+{
+    std::cout << "Usage: " << cmd << " [options]" << std::endl
+              << "/help         display this help text" << std::endl
+              << "/cols:<n>     split screen into <n> columns (default 3)" << std::endl
+              << "/rows:<n>     split screen into <n> rows (default 3)" << std::endl
+              << "/repeats:<n>  number of times to test each point (default 5)" << std::endl
+              << "/targtype:<s> the type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
+              << "                (default \"crosshairbullseye\")" << std::endl
+              << "/targsize:<n> diameter of target in pixels (default 5)" << std::endl
+              << "/label:<s>    label for this experiment (default \"dummy\")" << std::endl
+              << "/system:<s>   the system under test (\"mouse\" (default) or \"GP3\")" << std::endl;
 }
 #endif // not defined _WIN32
 
@@ -39,56 +57,122 @@ int main(int argc, char *argv[])
     std::string trackerLabel = "dummy";
     std::string system = "mouse";
 
+    // store command line args in here (different logic for different systems)
+    // to allow for a single parsing routine
+    std::map<std::string, std::string> cmdArgs;
+    bool configSuccess = true;
+
 #ifndef _WIN32
     // grab the config from the command line
-    static const char * const cmdShort = "c:hl:r:n:c:s:";
+    static const char * const cmdShort = "c:hl:r:n:t:g:c:s:";
     static const struct option cmdOpts[] = {
         {"help",     no_argument,       nullptr, 'h'},
         {"cols",     required_argument, nullptr, 'c'},
         {"rows",     required_argument, nullptr, 'r'},
         {"repeats",  required_argument, nullptr, 'n'},
         {"targsize", required_argument, nullptr, 't'},
+        {"targtype", required_argument, nullptr, 'g'},
         {"label",    required_argument, nullptr, 'l'},
         {"system",   required_argument, nullptr, 's'},
         {nullptr,    no_argument,       nullptr, 0}
     };
 
-    bool configSuccess = true; // will be set to false if any errors below
     int longIndex = 0;
     char opt;
     while ((opt = getopt_long(argc, argv, cmdShort, cmdOpts, &longIndex)) != -1)
     {
         switch (opt)
         {
-        case 'c':
-            cols = std::atoi(optarg);
-            break;
-        case 'r':
-            rows = std::atoi(optarg);
-            break;
-        case 'n':
-            repeats = std::atoi(optarg);
-            break;
-        case 't':
-            targetSize = std::atoi(optarg);
-            break;
-        case 'l':
-            trackerLabel = std::string(optarg);
-            break;
-        case 's':
-            system = std::string(optarg);
-            break;
-        case '?': // invalid argument
-            std::cerr << "Error: Invalid argument: " << static_cast<char>(optopt) << std::endl;
+          case '?': // invalid argument
+            std::cerr << "Error: Invalid argument: " << cmdOpts[longIndex].name << std::endl;
             configSuccess = false;
             break;
-        case ':': // missing value
+          case ':': // missing value
             std::cerr << "Error: Argument requires a value: " << cmdOpts[longIndex].name << std::endl;
             configSuccess = false;
             break;
-        case 'h':
+          default:
+            cmdArgs[cmdOpts[longIndex].name] = optarg;
+        }
+    }
+#else // if _WIN32 is defined
+    for (int i = 1; i < argc; ++i)
+    {
+        // must start with '/' or it's not a valid argument
+        if (argv[i][0] != '/')
+        {
+            std::cerr << "Error: Invalid argument: " << argv[i] << std::endl;
             configSuccess = false;
-            break;
+            continue;
+        }
+
+        // strip the '/' from the argument
+        const std::string argString(argv[i]+1);
+
+        // windows arguments are delimited with a comma
+        static const char delimeter = ':';
+        std::string key("");
+        std::string val("");
+
+        auto pos = argString.find(delimeter, 0);
+        if (pos == std::string::npos)
+        {
+            // no argument given
+            key = argString;
+        }
+        else
+        {
+            key = argString.substr(0, pos);
+            val = argString.substr(pos+1);
+        }
+
+        cmdArgs[key] = val;
+    }
+#endif // not defined _WIN32
+
+    // parse the command line arguments
+    // using C++11 syntax for wider compatibility
+    for (const auto &kvpair : cmdArgs)
+    {
+        const std::string &key = kvpair.first;
+        const std::string &val = kvpair.second;
+        if (key == "cols")
+        {
+            cols = std::atoi(val.c_str());
+        }
+        else if (key == "rows")
+        {
+            rows = std::atoi(val.c_str());
+        }
+        else if (key == "repeats")
+        {
+            repeats = std::atoi(val.c_str());
+        }
+        else if (key == "targsize")
+        {
+            targetSize = std::atoi(val.c_str());
+        }
+        else if (key == "targtype")
+        {
+            targType = val;
+        }
+        else if (key == "label")
+        {
+            trackerLabel =val;
+        }
+        else if (key == "system")
+        {
+            system = val;
+        }
+        else if (key == "help")
+        {
+            // this will trigger the help message to be shown
+            configSuccess = false;
+        }
+        else
+        {
+            std::cerr << "Error: Invalid argument: " << key << std::endl;
+            configSuccess = false;
         }
     }
 
@@ -97,14 +181,13 @@ int main(int argc, char *argv[])
         printUsage(argv[0]);
         return EXIT_FAILURE;
     }
-#endif // not defined _WIN32
 
     std::cout << "Using config:" << std::endl
               << "  cols=" << cols << std::endl
               << "  rows=" << rows << std::endl
               << "  repeats=" << repeats << std::endl
               << "  targsize=" << targetSize << std::endl
-              << "  targType=" << targType << std::endl
+              << "  targtype=" << targType << std::endl
               << "  label=" << trackerLabel << std::endl
               << "  system=" << system << std::endl;
 

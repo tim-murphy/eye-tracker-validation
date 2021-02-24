@@ -32,6 +32,7 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
         {
             std::cout << "Changing to full-screen mode" << std::endl;
             glutReshapeWindow(getScreenRes().first, getScreenRes().second);
+            glutPositionWindow(0, 0);
             glutFullScreen();
             glutSwapBuffers();
             fullscreen = true;
