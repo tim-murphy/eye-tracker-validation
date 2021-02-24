@@ -126,18 +126,43 @@ unsigned int GPClient::GPClientThread (GPClient *ptr)
   addr.sin_port = htons(ptr->_ip_port);
 
 #ifdef _WIN32
-  addr.sin_addr.S_un.S_addr
+  addr.sin_addr.S_un.S_addr = inet_addr(ptr->_ip_address.c_str());
 #else
-  addr.sin_addr.s_addr
+  addr.sin_addr.s_addr = inet_addr(ptr->_ip_address.c_str());
 #endif
-    = inet_addr(ptr->_ip_address.c_str());
 
+  // non-blocking socket, so may fail as can't connect /yet/
   if (0 != connect(ipsocket, (struct sockaddr*)&addr, sizeof (addr)))
   {
-    std::string errmsg("Could not connect to Gazepoint: ");
-    errmsg += ptr->_ip_address;
-    throw std::runtime_error(errmsg);
+#ifdef _WIN32
+    if (WSAGetLastError() != WSAEWOULDBLOCK)
+#endif
+    {
+      std::cerr << "Error connecting to gazepoint at "
+                << ptr->_ip_address << ":" << ptr->_ip_port << std::endl
+                << "Is Gazepoint Control running?" << std::endl;
+      throw std::runtime_error("Gazepoint connection error");
+    }
   }
+
+#ifdef _WIN32
+  // non-blocking socket - wait to make sure it connects
+  {
+    fd_set set;
+    FD_ZERO(&set);
+    FD_SET(ipsocket, &set);
+    struct timeval timeout{2,1}; // 2 seconds
+    select(ipsocket, 0, &set, 0, &timeout);
+
+    if (set.fd_count == 0)
+    {
+        std::cerr << "Error connecting to gazepoint at "
+            << ptr->_ip_address << ":" << ptr->_ip_port << std::endl
+            << "Is Gazepoint Control running?" << std::endl;
+        throw std::runtime_error("Gazepoint connection error");
+    }
+  }
+#endif
   
   ptr->_thread_exit = FALSE;
 
@@ -163,11 +188,11 @@ unsigned int GPClient::GPClientThread (GPClient *ptr)
         result = recv(ipsocket, rxbuffer, RX_TCP_BUFFER_MAX, 0);
 
         // FIXME this is never used
-        // if (result == SOCKET_ERROR)
-        // {
+        if (result == SOCKET_ERROR)
+        {
             // state = WSAGetLastError();
-        // }
-        // else
+        }
+        else
         if (result > 0)
         {
             rx_time = getTickCount();
