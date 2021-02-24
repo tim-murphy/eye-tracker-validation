@@ -34,7 +34,7 @@ TrackerDataCollector *TrackerDataCollector::create(
     }
     else
     {
-        std::string err("Unknown tracker" + tracker);
+        std::string err("Unknown tracker: \"" + tracker + "\"");
         throw std::runtime_error(err.c_str());
     }
 }
