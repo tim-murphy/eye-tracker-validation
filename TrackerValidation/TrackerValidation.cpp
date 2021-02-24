@@ -218,7 +218,9 @@ int main(int argc, char *argv[])
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
-    std::cout << "Finished! Have a nice day :)" << std::endl;
+    std::cout << "Finished! Press ENTER to exit" << std::endl;
+    std::cin.get();
+    std::cout << "Have a nice day :)" << std::endl;
 
     return EXIT_SUCCESS;
 }
