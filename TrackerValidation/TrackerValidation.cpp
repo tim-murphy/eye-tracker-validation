@@ -4,6 +4,7 @@
 #include "Validator.h"
 
 #include "TrackerConfig.h"
+#include "ValidatorConfig.h"
 
 #include <iostream>
 #include <map>
@@ -11,38 +12,46 @@
 
 #ifndef _WIN32
 #include <getopt.h>
+#endif
 
-// TODO get default values dynamically
-void printUsage(const char * const cmd)
+void printUsage(const char * const cmd, const ValidatorConfig &config)
 {
-    std::cout << "Usage: " << cmd << " [options]" << std::endl
-              << "--help         display this help text" << std::endl
-              << "--cols <n>     split screen into <n> columns (default 3)" << std::endl
-              << "--rows <n>     split screen into <n> rows (default 3)" << std::endl
-              << "--repeats <n>  number of times to test each point (default 5)" << std::endl
-              << "--targtype <s> the type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
-              << "                 (default \"crosshairbullseye\")" << std::endl
-              << "--targsize <n> diameter of target in pixels (default 5)" << std::endl
-              << "--label <s>    label for this experiment (default \"dummy\")" << std::endl
-              << "--system <s>   the system under test (\"mouse\" (default) or \"GP3\")" << std::endl;
-}
+// Windows and linux/unix use different conventions for command line arguments.
+// We will use the convention for each system. It means the usage is slightly
+// different between platforms, but the software will seem more "native" and
+// user friendly.
+#ifdef _WIN32
+    const char flag = '/';
+    const char equals = ':';
+#else
+    const char[] flag = "--";
+    const char equals = '=';
+#endif
 
-#else // if _WIN32 is defined
-
-void printUsage(const char * const cmd)
-{
     std::cout << "Usage: " << cmd << " [options]" << std::endl
-              << "/help         display this help text" << std::endl
-              << "/cols:<n>     split screen into <n> columns (default 3)" << std::endl
-              << "/rows:<n>     split screen into <n> rows (default 3)" << std::endl
-              << "/repeats:<n>  number of times to test each point (default 5)" << std::endl
-              << "/targtype:<s> the type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
-              << "                (default \"crosshairbullseye\")" << std::endl
-              << "/targsize:<n> diameter of target in pixels (default 5)" << std::endl
-              << "/label:<s>    label for this experiment (default \"dummy\")" << std::endl
-              << "/system:<s>   the system under test (\"mouse\" (default) or \"GP3\")" << std::endl;
+              << flag << "help         display this help text" << std::endl
+              << flag << "cols" << equals << "<n>"
+                    << "     split screen into <n> columns (default "
+                    << config.cols << ")" << std::endl
+              << flag << "rows" << equals << "<n>"
+                    << "     split screen into <n> rows (default "
+                    << config.rows << ")" << std::endl
+              << flag << "repeats" << equals << "<n>"
+                    << "  number of times to test each point (default "
+                    << config.repeats << ")" << std::endl
+              << flag << "targtype" << equals << "<s>"
+                    << " the type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
+                    << "                (default \"" << config.targType << "\")" << std::endl
+              << flag << "targsize" << equals << "<n>"
+                    << " diameter of target in pixels (default "
+                    << config.targetSize << ")" << std::endl
+              << flag << "label" << equals << "<s>"
+                    << "    label for this experiment (default \""
+                    << config.trackerLabel << "\")" << std::endl
+              << flag << "tracker" << equals << "<s>"
+                    << "  the tracker being tested (\"mouse\" or \"GP3\")" << std::endl
+                    << "                (default \"" << config.tracker << "\")" << std::endl;
 }
-#endif // not defined _WIN32
 
 int main(int argc, char *argv[])
 {
@@ -50,13 +59,7 @@ int main(int argc, char *argv[])
               << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-" << std::endl;
 
     // default config
-    unsigned int cols = 5;
-    unsigned int rows = 3;
-    unsigned int repeats = 5;
-    unsigned int targetSize = 6;
-    std::string targType = "crosshairbullseye";
-    std::string trackerLabel = "dummy";
-    std::string system = "mouse";
+    ValidatorConfig config;
 
     // store command line args in here (different logic for different systems)
     // to allow for a single parsing routine
@@ -67,14 +70,16 @@ int main(int argc, char *argv[])
     // grab the config from the command line
     static const char * const cmdShort = "c:hl:r:n:t:g:c:s:";
     static const struct option cmdOpts[] = {
-        {"help",     no_argument,       nullptr, 'h'},
-        {"cols",     required_argument, nullptr, 'c'},
-        {"rows",     required_argument, nullptr, 'r'},
-        {"repeats",  required_argument, nullptr, 'n'},
-        {"targsize", required_argument, nullptr, 't'},
-        {"targtype", required_argument, nullptr, 'g'},
-        {"label",    required_argument, nullptr, 'l'},
-        {"system",   required_argument, nullptr, 's'},
+        {"help",        no_argument,       nullptr, 'h'},
+        {"cols",        required_argument, nullptr, 'c'},
+        {"rows",        required_argument, nullptr, 'r'},
+        {"repeats",     required_argument, nullptr, 'n'},
+        {"targsize",    required_argument, nullptr, 't'},
+        {"targtype",    required_argument, nullptr, 'g'},
+        {"label",       required_argument, nullptr, 'l'},
+        {"tracker",     required_argument, nullptr, 's'},
+        {"trackerip",   required_argument, nullptr, 'i'},
+        {"trackerport", required_argument, nullptr, 'p'},
         {nullptr,    no_argument,       nullptr, 0}
     };
 
@@ -144,31 +149,39 @@ int main(int argc, char *argv[])
         const std::string &val = kvpair.second;
         if (key == "cols")
         {
-            cols = std::atoi(val.c_str());
+            config.cols = std::atoi(val.c_str());
         }
         else if (key == "rows")
         {
-            rows = std::atoi(val.c_str());
+            config.rows = std::atoi(val.c_str());
         }
         else if (key == "repeats")
         {
-            repeats = std::atoi(val.c_str());
+            config.repeats = std::atoi(val.c_str());
         }
         else if (key == "targsize")
         {
-            targetSize = std::atoi(val.c_str());
+            config.targetSize = std::atoi(val.c_str());
         }
         else if (key == "targtype")
         {
-            targType = val;
+            config.targType = val;
         }
         else if (key == "label")
         {
-            trackerLabel =val;
+            config.trackerLabel =val;
         }
-        else if (key == "system")
+        else if (key == "system" || key == "tracker")
         {
-            system = val;
+            config.tracker = val;
+        }
+        else if (key == "trackerip")
+        {
+            config.trackerConfig.ipAddress = val;
+        }
+        else if (key == "trackerport")
+        {
+            config.trackerConfig.ipPort = std::atoi(val.c_str());
         }
         else if (key == "help")
         {
@@ -184,29 +197,17 @@ int main(int argc, char *argv[])
 
     if (!configSuccess)
     {
-        printUsage(argv[0]);
+        printUsage(argv[0], config);
         return EXIT_FAILURE;
     }
 
-    std::cout << "Using config:" << std::endl
-              << "  cols=" << cols << std::endl
-              << "  rows=" << rows << std::endl
-              << "  repeats=" << repeats << std::endl
-              << "  targsize=" << targetSize << std::endl
-              << "  targtype=" << targType << std::endl
-              << "  label=" << trackerLabel << std::endl
-              << "  system=" << system << std::endl;
-
-    // standard configuration for Gazepoint
-    TrackerConfig gpConfig;
-    gpConfig.ipAddress = "127.0.0.1";
-    gpConfig.ipPort = 4242;
+    std::cout << config << std::endl;
 
     try
     {
-        Validator v = Validator(cols, rows, repeats,
-                                targType, targetSize, trackerLabel);
-        v.startTrackerDataCollector(system, gpConfig);
+        Validator v = Validator(config.cols, config.rows, config.repeats,
+                                config.targType, config.targetSize, config.trackerLabel);
+        v.startTrackerDataCollector(config.tracker, config.trackerConfig);
         v.startUI(&argc, argv); // this will stop when it has finished
 
         // processing happens here

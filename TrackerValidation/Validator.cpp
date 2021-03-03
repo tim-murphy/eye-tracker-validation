@@ -235,16 +235,6 @@ void Validator::showTarget()
         randomIndex = rand() % testCount.size();
     } while (testCount[randomIndex] >= getReps());
 
-    { // FIXME temporary debug block
-        std::pair<unsigned int, unsigned int> colRowPair
-            = indexToColRow(randomIndex);
-
-        std::cout << "Showing target for index " << randomIndex
-                  << " (" << colRowPair.second << ", " << colRowPair.first
-                  << ")" << " -- " << testCount[randomIndex] << " already done"
-                  << std::endl;
-    }
-
     setTargetPos(randomIndex);
     ui->showTarget(getTargetPos());
     setShowingTarget(true);
