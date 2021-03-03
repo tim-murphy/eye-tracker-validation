@@ -14,12 +14,15 @@
 #include <getopt.h>
 #endif
 
-void printUsage(const char * const cmd, const ValidatorConfig &config)
+void printUsage(const char * const cmd)
 {
-// Windows and linux/unix use different conventions for command line arguments.
-// We will use the convention for each system. It means the usage is slightly
-// different between platforms, but the software will seem more "native" and
-// user friendly.
+    // for default values
+    ValidatorConfig config;
+
+    // Windows and linux/unix use different conventions for command line arguments.
+    // We will use the convention for each system. It means the usage is slightly
+    // different between platforms, but the software will seem more "native" and
+    // user friendly.
 #ifdef _WIN32
     const char flag = '/';
     const char equals = ':';
@@ -29,28 +32,34 @@ void printUsage(const char * const cmd, const ValidatorConfig &config)
 #endif
 
     std::cout << "Usage: " << cmd << " [options]" << std::endl
-              << flag << "help         display this help text" << std::endl
+              << flag << "help\t\t\tdisplay this help text" << std::endl
               << flag << "cols" << equals << "<n>"
-                    << "     split screen into <n> columns (default "
+                    << "\t\tsplit screen into <n> columns (default "
                     << config.cols << ")" << std::endl
               << flag << "rows" << equals << "<n>"
-                    << "     split screen into <n> rows (default "
+                    << "\t\tsplit screen into <n> rows (default "
                     << config.rows << ")" << std::endl
               << flag << "repeats" << equals << "<n>"
-                    << "  number of times to test each point (default "
+                    << "\t\tnumber of times to test each point (default "
                     << config.repeats << ")" << std::endl
               << flag << "targtype" << equals << "<s>"
-                    << " the type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
-                    << "                (default \"" << config.targType << "\")" << std::endl
+                    << "\t\tthe type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
+                    << "\t\t\t\t(default \"" << config.targType << "\")" << std::endl
               << flag << "targsize" << equals << "<n>"
-                    << " diameter of target in pixels (default "
+                    << "\t\tdiameter of target in pixels (default "
                     << config.targetSize << ")" << std::endl
               << flag << "label" << equals << "<s>"
-                    << "    label for this experiment (default \""
+                    << "\t\tlabel for this experiment (default \""
                     << config.trackerLabel << "\")" << std::endl
               << flag << "tracker" << equals << "<s>"
-                    << "  the tracker being tested (\"mouse\" or \"GP3\")" << std::endl
-                    << "                (default \"" << config.tracker << "\")" << std::endl;
+                    << "\t\tthe tracker being tested (\"mouse\" or \"GP3\")" << std::endl
+                    << "\t\t\t\t(default \"" << config.tracker << "\")" << std::endl
+              << flag << "trackerip" << equals << "<s>"
+                    << "\t\tIP address used by the tracker (default "
+                    << config.trackerConfig.ipAddress << ")" << std::endl
+              << flag << "trackerport" << equals << "<n>"
+                    << "\tIP port used by the tracker (default "
+                    << config.trackerConfig.ipPort << ")" << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -197,7 +206,7 @@ int main(int argc, char *argv[])
 
     if (!configSuccess)
     {
-        printUsage(argv[0], config);
+        printUsage(argv[0]);
         return EXIT_FAILURE;
     }
 
