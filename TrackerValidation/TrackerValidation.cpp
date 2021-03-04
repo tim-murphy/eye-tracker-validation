@@ -27,7 +27,7 @@ void printUsage(const char * const cmd)
     const char flag = '/';
     const char equals = ':';
 #else
-    const char[] flag = "--";
+    const char *flag = "--";
     const char equals = '=';
 #endif
 
