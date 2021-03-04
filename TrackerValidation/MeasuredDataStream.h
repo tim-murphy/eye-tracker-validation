@@ -11,12 +11,12 @@
 
 class MeasuredDataStream : public MeasuredData
 {
-  private:
+  protected:
     // this stream is used to build the output data
     std::stringstream outStream;
 
     // this is where the final data is written
-    std::ostream &finalOutStream;
+    std::ostream *finalOutStream;
 
   public:
     MeasuredDataStream(std::string trackerName,
@@ -30,7 +30,7 @@ class MeasuredDataStream : public MeasuredData
         unsigned int xActual,
         unsigned int yActual);
 
-    void writeBuffer();
+    virtual void writeBuffer();
 };
 
 #endif // defined MEASUREDDATASTREAM_H

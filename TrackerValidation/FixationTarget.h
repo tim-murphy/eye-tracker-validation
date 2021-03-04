@@ -19,7 +19,7 @@ class FixationTarget
     virtual void drawOpenGL(unsigned int x, unsigned int y) = 0;
 
     // create a target of the given type.
-    // throws std::runtime_error if type does not match a known type.
+    // @throws std::runtime_error if type does not match a known type.
     static FixationTarget *create(const std::string &type,
                                   unsigned int diameter);
 

@@ -4,7 +4,7 @@
 #include "Validator.h"
 
 #include "ScreenPositionStore.h"
-#include "MeasuredDataStream.h"
+#include "MeasuredData.h"
 #include "ValidatorUIOpenGL.h"
 
 #include <chrono>
@@ -14,24 +14,29 @@
 #include <sstream>
 #include <thread>
 
-Validator::Validator(unsigned int columns,
-                     unsigned int rows,
-                     unsigned int repeats,
-                     std::string targetType,
-                     unsigned int targetSize,
-                     std::string trackerLabel)
-    : reps(repeats), targSize(targetSize), ui(nullptr), data(nullptr),
-      trackerLabel(trackerLabel), showingTarget(false), targetIndex(0),
-      trackerDataCollector(nullptr), targType(targetType)
+Validator::Validator(const ValidatorConfig &conf)
+    : config(conf), ui(nullptr), data(nullptr),
+      showingTarget(false), targetIndex(0),
+      trackerDataCollector(nullptr)
 {
     cursorPosition = new ScreenPositionStore();
     gazePosition = new ScreenPositionStore();
     targetPosition = new ScreenPositionStore();
-    dimensions = std::make_pair(columns, rows);
+    dimensions = std::make_pair(config.cols, config.rows);
 
     // initialise the test counts
     testCount.resize(
-        (static_cast<size_t>(columns) * static_cast<size_t>(rows)), 0);
+        (static_cast<size_t>(config.cols) * static_cast<size_t>(config.rows)), 0);
+
+    if (config.outputFile == "")
+    {
+        data = MeasuredData::create("cout", config.trackerLabel);
+    }
+    else
+    {
+        data = MeasuredData::create("file", config.trackerLabel,
+                                    config.outputFile);
+    }
 
     valPtr = this;
 }
@@ -146,20 +151,10 @@ bool Validator::recordMeasurement()
 
 void Validator::run()
 {
-    // init if this is the first run
-    if (data == nullptr)
+    // make sure the ui is initialised
+    while (this->ui == nullptr)
     {
-        data = new MeasuredDataStream(getTrackerLabel(), std::cout);
-
-        std::cout << "Waiting for UI to initialise...";
-        while (this->ui == nullptr)
-        {
-            std::cout << "." << std::flush;
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        }
-        std::cout << "done" << std::endl;
-
-        std::cout << "Starting validator." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
     // if we're done testing, clean everything up
@@ -241,7 +236,7 @@ void Validator::showTarget()
 }
 
 void Validator::startTrackerDataCollector(const std::string &command,
-                                          const TrackerConfig &config)
+                                          const TrackerConfig &conf)
 {
     if (trackerDataCollector != nullptr)
     {
@@ -249,7 +244,7 @@ void Validator::startTrackerDataCollector(const std::string &command,
     }
     trackerDataCollector = TrackerDataCollector::create(command,
                                                         *gazePosition,
-                                                        config);
+                                                        conf);
     trackerDataCollector->run();
 }
 
@@ -323,17 +318,17 @@ void Validator::setTargetPos(unsigned int index)
 // -- vanilla getters and setters -- //
 unsigned int Validator::getReps() const
 {
-    return reps;
+    return config.repeats;
 }
 
 unsigned int Validator::getTargetSize() const
 {
-    return targSize;
+    return config.targetSize;
 }
 
 const std::string &Validator::getTargetType() const
 {
-    return targType;
+    return config.targType;
 }
 
 const std::pair<unsigned int, unsigned int> &Validator::getDimensions() const
@@ -343,7 +338,7 @@ const std::pair<unsigned int, unsigned int> &Validator::getDimensions() const
 
 const std::string &Validator::getTrackerLabel() const
 {
-    return trackerLabel;
+    return config.trackerLabel;
 }
 
 bool Validator::getShowingTarget() const

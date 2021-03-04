@@ -17,6 +17,7 @@ class ValidatorConfig
     unsigned int repeats;
     unsigned int targetSize;
     std::string targType;
+    std::string outputFile;
     std::string trackerLabel;
     std::string tracker;
     TrackerConfig trackerConfig;
@@ -28,6 +29,7 @@ class ValidatorConfig
                     std::string targType = "crosshairbullseye",
                     std::string trackerLabel = "dummy",
                     std::string tracker = "mouse",
+                    std::string outputFile = "",
                     TrackerConfig trackerConfig = TrackerConfig("127.0.0.1", 4242))
         : cols(columns), rows(rows), repeats(repeats),
           targetSize(targetSize), targType(targType),

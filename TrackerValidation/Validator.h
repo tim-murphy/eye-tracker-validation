@@ -8,6 +8,7 @@
 #include "ScreenPositionStore.h"
 #include "TrackerConfig.h"
 #include "TrackerDataCollector.h"
+#include "ValidatorConfig.h"
 #include "ValidatorUI.h"
 
 #include <utility> // for std::pair
@@ -25,20 +26,10 @@ class Validator
 
     TrackerDataCollector *trackerDataCollector;
 
-    // The label given to the tracker we will be validating
-    std::string trackerLabel;
-
     // Grid dimensions (cols, rows).
     std::pair<unsigned int, unsigned int> dimensions;
 
-    // How many times are we testing each point?
-    unsigned int reps;
-
-    // what type of target are we using?
-    std::string targType;
-
-    // How big is the target? This is a diameter in pixels.
-    unsigned int targSize;
+    const ValidatorConfig &config;
 
     // Container with a counter for each grid point tested.
     // Storing as a 1-D container for simplicity and speed.
@@ -90,18 +81,7 @@ class Validator
     // A target will be placed in the center of each grid cell, and cells will
     // be tested repeats times. The target will be a circle of targetSize
     // pixels in diameter.
-    // @param columns number of columns to split the screen into
-    // @param rows the number of rows to split the screen into
-    // @param repeats the number of times each cell is tested
-    // @param targetType type of target to use (e.g. circle)
-    // @param targetSize the diameter of the circular target, in pixels
-    // @param trackerLabel a descriptive label written with the data
-    Validator(unsigned int columns,
-              unsigned int rows,
-              unsigned int repeats,
-              std::string targetType,
-              unsigned int targetSize,
-              std::string trackerLabel);
+    Validator(const ValidatorConfig &config);
 
     // Destructor
     ~Validator();

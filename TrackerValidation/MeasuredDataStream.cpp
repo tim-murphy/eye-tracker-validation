@@ -9,7 +9,7 @@
 
 MeasuredDataStream::MeasuredDataStream(std::string trackerName,
                                        std::ostream &str)
-    : MeasuredData(trackerName), finalOutStream(str)
+    : MeasuredData(trackerName), finalOutStream(&str)
 {
     // CSV header
     outStream << "\"Tracker\",\"Timestamp\",\"Target-ID\","
@@ -21,7 +21,11 @@ MeasuredDataStream::MeasuredDataStream(std::string trackerName,
 void MeasuredDataStream::writeBuffer()
 {
     // write the generated data file
-    finalOutStream << outStream.str() << std::flush;
+    *finalOutStream << std::endl
+        << "========= data output - copy/paste into notepad =========" << std::endl
+        << outStream.str()
+        << "=========================================================" << std::endl
+        << std::endl;
 
     // and reset the stream
     std::stringstream().swap(outStream);

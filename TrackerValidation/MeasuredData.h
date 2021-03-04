@@ -1,4 +1,4 @@
-// Abstract class for storage of measured data.
+// Abstract factory class for storage of measured data.
 // Tim Murphy <tim@murphy.org> 2021
 
 #ifndef MEASUREDDATA_H
@@ -31,6 +31,13 @@ class MeasuredData
     // If using a buffer, write the buffered data to the datastore. If not
     // overloaded, this method is a no-op.
     virtual void writeBuffer();
+
+    // create a data store of the given type.
+    // @throws std::runtime_error if type does not match a known type.
+    // @param path the filesystem path to the store, or "" if not applicable
+    static MeasuredData *create(const std::string &type,
+                                const std::string &trackerName,
+                                std::string path = "");
 
     // -- getters -- //
     const std::string &getName() const;

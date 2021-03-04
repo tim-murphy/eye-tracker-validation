@@ -51,6 +51,9 @@ void printUsage(const char * const cmd)
               << flag << "label" << equals << "<s>"
                     << "\t\tlabel for this experiment (default \""
                     << config.trackerLabel << "\")" << std::endl
+              << flag << "outputfile" << equals << "<s>"
+                    << "\t\tpath to file to write output data to, or leave empty to write to console" << std::endl
+                    << "\t\t\t\t(default \"" << config.outputFile << "\")" << std::endl
               << flag << "tracker" << equals << "<s>"
                     << "\t\tthe tracker being tested (\"mouse\" or \"GP3\")" << std::endl
                     << "\t\t\t\t(default \"" << config.tracker << "\")" << std::endl
@@ -77,7 +80,7 @@ int main(int argc, char *argv[])
 
 #ifndef _WIN32
     // grab the config from the command line
-    static const char * const cmdShort = "c:hl:r:n:t:g:c:s:";
+    static const char * const cmdShort = "c:hl:r:n:t:g:c:s:i:p:o:";
     static const struct option cmdOpts[] = {
         {"help",        no_argument,       nullptr, 'h'},
         {"cols",        required_argument, nullptr, 'c'},
@@ -89,6 +92,7 @@ int main(int argc, char *argv[])
         {"tracker",     required_argument, nullptr, 's'},
         {"trackerip",   required_argument, nullptr, 'i'},
         {"trackerport", required_argument, nullptr, 'p'},
+        {"outputfile",  required_argument, nullptr, 'o'},
         {nullptr,    no_argument,       nullptr, 0}
     };
 
@@ -152,6 +156,7 @@ int main(int argc, char *argv[])
 
     // parse the command line arguments
     // using C++11 syntax for wider compatibility
+    // FIXME add bounds checking
     for (const auto &kvpair : cmdArgs)
     {
         const std::string &key = kvpair.first;
@@ -179,6 +184,10 @@ int main(int argc, char *argv[])
         else if (key == "label")
         {
             config.trackerLabel =val;
+        }
+        else if (key == "outputfile")
+        {
+            config.outputFile = val;
         }
         else if (key == "system" || key == "tracker")
         {
@@ -214,8 +223,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        Validator v = Validator(config.cols, config.rows, config.repeats,
-                                config.targType, config.targetSize, config.trackerLabel);
+        Validator v = Validator(config);
         v.startTrackerDataCollector(config.tracker, config.trackerConfig);
         v.startUI(&argc, argv); // this will stop when it has finished
 
