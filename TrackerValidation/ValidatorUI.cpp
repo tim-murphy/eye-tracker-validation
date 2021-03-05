@@ -3,15 +3,10 @@
 
 #include "ValidatorUI.h"
 
+#include "common.h"
+
 #include <iostream>
 #include <stdexcept>
-
-// for setScreenRes
-#ifdef _WIN32
-    #include <wtypes.h>
-#else
-    #include <X11/Xlib.h>
-#endif
 
 ValidatorUI::ValidatorUI(unsigned int targetSize,
                          const std::string &targetType)
@@ -22,32 +17,7 @@ ValidatorUI::ValidatorUI(unsigned int targetSize,
 
 void ValidatorUI::setScreenRes()
 {
-#ifdef _WIN32
-    RECT screen;
-
-    if (!GetWindowRect(GetDesktopWindow(), &screen))
-    {
-        throw std::runtime_error("Could not get screen resolution");
-    }
-
-    screenRes = std::make_pair(screen.right, screen.bottom);
-#else
-    Display *d = XOpenDisplay(nullptr);
-    Screen *s = nullptr;
-
-    if (d != nullptr)
-    {
-        s = DefaultScreenOfDisplay(d);
-    }
-
-    if (d == nullptr || s == nullptr)
-    {
-        throw std::runtime_error("Could not get screen resolution");
-    }
-
-    screenRes = std::make_pair(s->width, s->height);
-#endif
-
+    screenRes = common::getScreenRes();
     std::cout << "Screen resolution: " << screenRes.first << "x"
               << screenRes.second << std::endl;
 }

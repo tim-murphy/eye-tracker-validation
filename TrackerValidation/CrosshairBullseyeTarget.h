@@ -20,8 +20,8 @@ private:
     unsigned int getOuterDiameter(void) const;
 
     // helper function
-    static void drawCircle(unsigned int x, unsigned int y,
-                           unsigned int diameter);
+    static void drawCircleOpenGL(unsigned int x, unsigned int y,
+                                 unsigned int diameter);
 
   public:
     // diameter in this case refers to the size of the inner circle of the

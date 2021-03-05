@@ -25,6 +25,7 @@ class TrackerDataCollector
     // is the data collector process running?
     bool processRunning;
 
+    // constructor hidden as this is using a factory pattern
     TrackerDataCollector(ScreenPositionStore& store,
                          const TrackerConfig &config);
 

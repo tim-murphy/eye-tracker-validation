@@ -4,7 +4,7 @@
 #include "CircleTarget.h"
 
 #include "common.h"
-#include "ValidatorUIOpenGL.h"
+#include "OpenGLCommon.h"
 
 #include <cmath>
 #include <GL/freeglut.h>
@@ -22,7 +22,7 @@ void CircleTarget::drawOpenGL(unsigned int x, unsigned int y)
 
     double radius = static_cast<double>(getDiameter()) / 2.0;
 
-    std::pair<double, double> centerPos = ValidatorUIOpenGL::pixelToPosition(x, y);
+    std::pair<double, double> centerPos = OpenGLPixelToPosition(x, y);
     glVertex2d(centerPos.first, centerPos.second);
 
     for (double n = 0; n <= segments; ++n)
@@ -30,7 +30,7 @@ void CircleTarget::drawOpenGL(unsigned int x, unsigned int y)
         // the angle used for this triangle segment
         double sigma = n * common::pi * 2.0 / static_cast<double>(segments);
 
-        std::pair<double, double> pos = ValidatorUIOpenGL::pixelToPosition(
+        std::pair<double, double> pos = OpenGLPixelToPosition(
             static_cast<unsigned int>(x + (radius * cos(sigma))),
             static_cast<unsigned int>(y + (radius * sin(sigma))));
 

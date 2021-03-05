@@ -31,22 +31,29 @@ add_library(${SOURCESLIB} STATIC ${SOURCES})
 
 # Add source to this project's executable.
 add_executable(${MAINEXE} ${MAINSRC})
-target_link_libraries(${MAINEXE} ${SOURCESLIB})
+list(APPEND EXELIBS ${SOURCESLIB})
 
 add_subdirectory("gazepoint")
 add_subdirectory("freeglut-3.2.1")
 target_include_directories(${SOURCESLIB} PUBLIC "freeglut-3.2.1/include")
-target_link_libraries(${MAINEXE} "GPClient")
-target_link_libraries(${MAINEXE} "freeglut_static")
+list(APPEND EXELIBS "GPClient")
+list(APPEND EXELIBS "freeglut_static")
 
 find_package(Threads REQUIRED)
-target_link_libraries(${MAINEXE} ${CMAKE_THREAD_LIBS_INIT})
+list(APPEND EXELIBS ${CMAKE_THREAD_LIBS_INIT})
+
+if (NOT WIN32)
+    find_package(X11)
+    list(APPEND EXELIBS ${X11_LIBRARIES})
+endif ()
+
+target_link_libraries(${MAINEXE} ${EXELIBS})
 
 # unittests
 set(TESTEXE "unittests")
 file(GLOB TESTSRC "test/*.cpp")
 add_executable(${TESTEXE} ${TESTSRC})
-target_link_libraries(${TESTEXE} ${SOURCESLIB})
+target_link_libraries(${TESTEXE} ${EXELIBS})
 add_test(UnitTests ${TESTEXE})
 add_test(CompileTests "${CMAKE_COMMAND}" --build "${CMAKE_SOURCES_DIR}" --target "${TESTEXE}")
 SET_TESTS_PROPERTIES(UnitTests PROPERTIES DEPENDS CompileTests)

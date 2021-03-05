@@ -14,6 +14,9 @@ namespace common
 // pi constant
 constexpr double pi = 3.14159265358979323846264338327950288419716939937510582097494459230781640629;
 
+// get the resolution of the current screen
+std::pair<unsigned int, unsigned int> getScreenRes();
+
 } // end namespace common
 
 // operator overloads need to live out of the namespace

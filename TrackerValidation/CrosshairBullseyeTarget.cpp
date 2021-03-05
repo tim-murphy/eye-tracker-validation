@@ -6,7 +6,7 @@
 #include "CrosshairBullseyeTarget.h"
 
 #include "common.h" // for common::pi
-#include "ValidatorUIOpenGL.h" // FIXME pull out into helper collection
+#include "OpenGLCommon.h"
 
 #include <cmath>
 #include <GL/freeglut.h>
@@ -21,13 +21,13 @@ unsigned int CrosshairBullseyeTarget::getOuterDiameter(void) const
     return getDiameter() * targetRatio;
 }
 
-void CrosshairBullseyeTarget::drawCircle(unsigned int x, unsigned int y,
+void CrosshairBullseyeTarget::drawCircleOpenGL(unsigned int x, unsigned int y,
                                          unsigned int diameter)
 {
     glBegin(GL_TRIANGLE_FAN);
 
     double radius = static_cast<double>(diameter) / 2.0;
-    std::pair<double, double> centerPos = ValidatorUIOpenGL::pixelToPosition(x, y);
+    std::pair<double, double> centerPos = OpenGLPixelToPosition(x, y);
     glVertex2d(centerPos.first, centerPos.second);
 
     for (double n = 0; n <= segments; ++n)
@@ -35,7 +35,7 @@ void CrosshairBullseyeTarget::drawCircle(unsigned int x, unsigned int y,
         // the angle used for this triangle segment
         double sigma = n * common::pi * 2.0 / static_cast<double>(segments);
 
-        std::pair<double, double> pos = ValidatorUIOpenGL::pixelToPosition(
+        std::pair<double, double> pos = OpenGLPixelToPosition(
             static_cast<unsigned int>(x + (radius * cos(sigma))),
             static_cast<unsigned int>(y + (radius * sin(sigma))));
 
@@ -51,7 +51,7 @@ void CrosshairBullseyeTarget::drawOpenGL(unsigned int x, unsigned int y)
 
     // first draw the outer circle (white)
     glColor4d(1.0, 1.0, 1.0, 1.0);
-    drawCircle(x, y, getOuterDiameter());
+    drawCircleOpenGL(x, y, getOuterDiameter());
 
     // crosshair (black)
     // each rectangle covers (origin +/- outerRadius) x (origin +/- radius)
@@ -60,12 +60,12 @@ void CrosshairBullseyeTarget::drawOpenGL(unsigned int x, unsigned int y)
     unsigned int radius = getDiameter() / 2;
     unsigned int outerRadius = getOuterDiameter() / 2;
     std::pair<double, double> upperLeftPos[] = {
-        ValidatorUIOpenGL::pixelToPosition(x - outerRadius - 1, y - radius),
-        ValidatorUIOpenGL::pixelToPosition(x - radius, y - outerRadius - 1)
+        OpenGLPixelToPosition(x - outerRadius - 1, y - radius),
+        OpenGLPixelToPosition(x - radius, y - outerRadius - 1)
     };
     std::pair<double, double> lowerRightPos[] = {
-        ValidatorUIOpenGL::pixelToPosition(x + outerRadius + 1, y + radius),
-        ValidatorUIOpenGL::pixelToPosition(x + radius, y + outerRadius + 1)
+        OpenGLPixelToPosition(x + outerRadius + 1, y + radius),
+        OpenGLPixelToPosition(x + radius, y + outerRadius + 1)
     };
 
     for (int i = 0; i < sizeof(upperLeftPos) / sizeof(upperLeftPos[0]); ++i)
@@ -79,5 +79,5 @@ void CrosshairBullseyeTarget::drawOpenGL(unsigned int x, unsigned int y)
 
     // inner circle (white)
     glColor4d(1.0, 1.0, 1.0, 1.0);
-    drawCircle(x, y, getDiameter());
+    drawCircleOpenGL(x, y, getDiameter());
 }

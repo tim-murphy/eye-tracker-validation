@@ -15,8 +15,11 @@ class MeasuredData
     // example, testing is done with different settings.
     std::string name;
 
-  public:
+  protected:
+    // constructor hidden as this is using a factory pattern
     MeasuredData(std::string trackerName);
+
+  public:
     virtual ~MeasuredData();
 
     // Write the data to the buffer or datastore (whatever that may be)

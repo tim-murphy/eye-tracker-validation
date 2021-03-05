@@ -75,7 +75,13 @@ void onClickFunc(int button, int state, int x, int y)
         throw std::runtime_error("onClickFunc called when thread not running!");
     }
 
-    if (ValidatorUIOpenGL::mouseClickEvent(button, state))
+    // this should never happen
+    if (ValidatorUIOpenGL::getInstance() == nullptr)
+    {
+        throw std::runtime_error("onClickFunc called before UI was started!");
+    }
+
+    if (ValidatorUIOpenGL::getInstance()->mouseClickEvent(button, state))
     {
         Validator::valPtr->setCursorPos(std::make_pair(x, y));
 
@@ -91,8 +97,8 @@ void Validator::startUI(int *argcp, char **argvp)
     // just in case - for normal use this should not be initialised
     delete ui;
 
-    ui = new ValidatorUIOpenGL(getTargetSize(), getTargetType(),
-                               argcp, argvp);
+    ui = ValidatorUIOpenGL::create(getTargetSize(), getTargetType(),
+                                   argcp, argvp);
     ui->setIdleFunc(&idleFunc);
     ui->setMouseFunc(&onClickFunc);
     ui->run();

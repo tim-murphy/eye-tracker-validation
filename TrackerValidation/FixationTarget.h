@@ -1,4 +1,4 @@
-// Fixation target abstract class
+// Fixation target abstract factory class
 // Written by Tim Murphy <tim@murphy.org> 2021
 
 #ifndef FIXATIONTARGET_H
@@ -12,9 +12,11 @@ class FixationTarget
     // Diameter of the target, in pixels.
     unsigned int diameter;
 
-  public:
+  protected:
+    // constructor - hidden as this is using a factory pattern
     FixationTarget(unsigned int diameter);
 
+  public:
     // draw target with OpenGL at pixel location (x, y)
     virtual void drawOpenGL(unsigned int x, unsigned int y) = 0;
 

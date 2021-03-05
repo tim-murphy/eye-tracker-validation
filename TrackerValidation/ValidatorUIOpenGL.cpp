@@ -11,15 +11,50 @@
 #include <memory>
 #include <thread>
 
+// -- singleton initialisation -- //
+ValidatorUIOpenGL *ValidatorUIOpenGL::create(unsigned int targetSize,
+                                             const std::string &targType,
+                                             int *argcp, char **argvp)
+{
+    const std::lock_guard<std::mutex> lock(createLock);
+    if (inst == nullptr)
+    {
+        inst = new ValidatorUIOpenGL(targetSize, targType, argcp, argvp);
+    }
+
+    return inst;
+}
+
+ValidatorUIOpenGL *ValidatorUIOpenGL::getInstance()
+{
+    return inst;
+}
+
 // -- UI static functions -- //
 void ValidatorUIOpenGL::drawScreen()
 {
-    // nothing to do here
+    ValidatorUIOpenGL * const ui = ValidatorUIOpenGL::getInstance();
+
+    // this should never happen
+    if (ui == nullptr)
+    {
+        throw std::runtime_error("drawScreen() called before UI was started!");
+    }
+
+    // redraw the screen
+    ui->showTarget(ui->currTargetPos);
 }
 
-bool ValidatorUIOpenGL::fullscreen = false;
 void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
 {
+    ValidatorUIOpenGL * const ui = ValidatorUIOpenGL::getInstance();
+
+    // this should never happen
+    if (ui == nullptr)
+    {
+        throw std::runtime_error("keypress called before UI was started!");
+    }
+
     switch (key)
     {
       case 27: // escape key
@@ -28,25 +63,34 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
         break;
 
       case 32:
-        if (!fullscreen)
+        if (!ui->fullscreen)
         {
             std::cout << "Changing to full-screen mode" << std::endl;
-            glutReshapeWindow(getScreenRes().first, getScreenRes().second);
+            std::pair<unsigned int, unsigned int> res = common::getScreenRes();
+            glutReshapeWindow(res.first, res.second);
             glutPositionWindow(0, 0);
             glutFullScreen();
             glutSwapBuffers();
-            fullscreen = true;
+            ui->fullscreen = true;
         }
         break;
     }
 }
 void ValidatorUIOpenGL::resize(int width, int height)
 {
+    ValidatorUIOpenGL * const ui = ValidatorUIOpenGL::getInstance();
+
+    // this should never happen
+    if (ui == nullptr)
+    {
+        throw std::runtime_error("resize called before UI was started!");
+    }
+
     glViewport(0, 0, width, height);
 
-    if (!fullscreen)
+    if (!ui->fullscreen)
     {
-        showSplashScreen();
+        ui->showSplashScreen();
     }
 }
 
@@ -88,24 +132,7 @@ void ValidatorUIOpenGL::drawTarget(unsigned int x, unsigned int y,
     std::unique_ptr<FixationTarget> t(
         FixationTarget::create(getTargetType(), diameter));
     t->drawOpenGL(x, y);
-}
-std::pair<double, double> ValidatorUIOpenGL::pixelToPosition(unsigned int x,
-                                                             unsigned int y)
-{
-    // Convert the pixel locations into relative positions [-1.0, 1.0].
-    // Can be done by 2 x (actual_pixel_value / max_pixel_value) - 1
-    // for each axis.
-    // e.g. location (100, 100) on a 1024x768 screen would be:
-    //  x = 2 x (100/1024) - 1 = -0.80
-    //  y = 1 - (2 x (100/768) = 0.74
-    //  So returned value would be (-0.80, 0.74)
-    std::pair<unsigned int, unsigned int> res = getScreenRes();
-    double xPos = 2 * (static_cast<double>(x)
-                  / static_cast<double>(res.first)) - 1.0;
-    double yPos = 1.0 - (2 * (static_cast<double>(y)
-                  / static_cast<double>(res.second)));
-
-    return std::make_pair(xPos, yPos);
+    currTargetPos = std::make_pair(x, y);
 }
 
 // -- end UI static functions --//
@@ -113,7 +140,8 @@ std::pair<double, double> ValidatorUIOpenGL::pixelToPosition(unsigned int x,
 ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
                                      const std::string &targetType,
                                      int *argcp, char **argvp)
-    : ValidatorUI(targetSize, targetType)
+    : ValidatorUI(targetSize, targetType),
+      fullscreen(false), currTargetPos(std::make_pair(0,0))
 {
     static constexpr std::pair<int, int> windowRes = std::make_pair(640, 480);
 
@@ -167,3 +195,6 @@ bool ValidatorUIOpenGL::inTestRoutine() const
     // if we're fullscreen then we're testing.
     return fullscreen;
 }
+
+std::mutex ValidatorUIOpenGL::createLock;
+ValidatorUIOpenGL *ValidatorUIOpenGL::inst{nullptr};
