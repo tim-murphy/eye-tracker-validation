@@ -47,10 +47,17 @@ std::pair<unsigned int, unsigned int> common::getScreenRes()
 
     if (d == nullptr || s == nullptr)
     {
+        if (d != nullptr)
+        {
+            XCloseDisplay(d);
+        }
+
         throw std::runtime_error("Could not get screen resolution");
     }
 
     screenRes = std::make_pair(s->width, s->height);
+
+    XCloseDisplay(d);
 #endif
 
     return screenRes;
