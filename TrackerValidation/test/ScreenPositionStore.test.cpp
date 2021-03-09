@@ -6,7 +6,7 @@
 //       when comparisons fail.
 #include "catch.hpp"
 
-TEST_CASE("ScreenPositionSize", "[ScreenPositionSize]")
+TEST_CASE("ScreenPositionStore", "[ScreenPositionStore]")
 {
     ScreenPositionStore store;
 

@@ -25,18 +25,19 @@ class ValidatorConfig
 
     ValidatorConfig(unsigned int columns = 5,
                     unsigned int rows = 3,
-                    unsigned int repeats = 5,
+                    unsigned int repeats = 2,
                     unsigned int targetSize = 6,
                     std::string targType = "crosshairbullseye",
-                    std::string trackerLabel = "dummy",
+                    std::string trackerLabel = "Test project",
                     std::string tracker = "mouse",
-                    std::string subject = "test_user",
+                    std::string subject = "Test user",
                     std::string outputFile = "",
                     TrackerConfig trackerConfig = TrackerConfig("127.0.0.1", 4242))
         : cols(columns), rows(rows), repeats(repeats),
           targetSize(targetSize), targType(targType),
           trackerLabel(trackerLabel), tracker(tracker),
-          trackerConfig(trackerConfig), subject(subject)
+          trackerConfig(trackerConfig), subject(subject),
+          outputFile(outputFile)
     {}
 
     friend std::ostream& operator<<(std::ostream & str,
