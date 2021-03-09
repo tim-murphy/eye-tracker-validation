@@ -56,3 +56,4 @@ again.
 
 # Design Overview
 ![High-level Overview](./docs/diagrams/Tracker_validation_flowchart.svg)
+![Object Relation Overview](./docs/diagrams/Tracker_validation_uml.svg)
