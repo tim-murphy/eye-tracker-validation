@@ -1,4 +1,3 @@
-#include "../common.h"
 #include "../ValidatorConfig.h"
 
 #include "catch.hpp"
