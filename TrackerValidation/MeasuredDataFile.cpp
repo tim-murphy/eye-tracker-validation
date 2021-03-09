@@ -7,9 +7,10 @@
 #include <iostream>
 #include <fstream>
 
-MeasuredDataFile::MeasuredDataFile(const std::string &trackerName,
+MeasuredDataFile::MeasuredDataFile(const std::string &label,
+                                   const std::string &trackerName,
                                    const std::string &filePath)
-    : MeasuredDataStream(trackerName, std::cout), // cout as a placeholder
+    : MeasuredDataStream(label, trackerName, std::cout), // cout as placeholder
       filePath(filePath)
 {
     outFile.open(filePath, std::ios::out | std::ios::app);

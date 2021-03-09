@@ -44,6 +44,9 @@ class TrackerDataCollector
     // nothing.
     virtual void stop() = 0;
 
+    // The name of this tracker (overloaded by each implementing class).
+    virtual const std::string &getName() const = 0;
+
     // Is the data collector process running?
     bool isRunning() const;
 };

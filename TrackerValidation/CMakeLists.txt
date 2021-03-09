@@ -7,6 +7,7 @@ enable_testing()
 
 add_compile_definitions(FREEGLUT_BUILD_STATIC_LIBS)
 add_compile_definitions(FREEGLUT_STATIC)
+add_compile_definitions(FREEGLUT_LIB_PRAGMAS=0)
 
 # OpenGL policy - use GLVND instead of LEGACY
 if (POLICY CMP0072)

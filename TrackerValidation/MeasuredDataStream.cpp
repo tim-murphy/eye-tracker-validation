@@ -7,12 +7,13 @@
 #include <iomanip>
 #include <iostream>
 
-MeasuredDataStream::MeasuredDataStream(std::string trackerName,
+MeasuredDataStream::MeasuredDataStream(const std::string &label,
+                                       const std::string &trackerName,
                                        std::ostream &str)
-    : MeasuredData(trackerName), finalOutStream(&str)
+    : MeasuredData(label, trackerName), finalOutStream(&str)
 {
     // CSV header
-    outStream << "\"Tracker\",\"Timestamp\",\"Target-ID\","
+    outStream << "\"Label\",\"Tracker\",\"Timestamp\",\"Target-ID\","
               << "\"Target-X\",\"Target-Y\","
               << "\"Actual-X\",\"Actual-Y\""
               << std::endl;
@@ -51,7 +52,8 @@ bool MeasuredDataStream::writeData(
     localtime_r(&ts, &buffer);
 #endif
 
-    outStream << "\"" << getName() << "\","
+    outStream << "\"" << getLabel() << "\","
+              << "\"" << getTrackerName() << "\","
               << "\"" << std::put_time(&buffer, "%F %T") << "\","
               << targetNumber << ","
               << xTarget << ","

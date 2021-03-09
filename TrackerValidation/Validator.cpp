@@ -24,17 +24,25 @@ Validator::Validator(const ValidatorConfig &conf)
     targetPosition = new ScreenPositionStore();
     dimensions = std::make_pair(config.cols, config.rows);
 
+    trackerDataCollector = TrackerDataCollector::create(config.tracker,
+                                                        *gazePosition,
+                                                        config.trackerConfig);
+
     // initialise the test counts
     testCount.resize(
         (static_cast<size_t>(config.cols) * static_cast<size_t>(config.rows)), 0);
 
     if (config.outputFile == "")
     {
-        data = MeasuredData::create("cout", config.trackerLabel);
+        data = MeasuredData::create("cout",
+                                    config.trackerLabel,
+                                    trackerDataCollector->getName());
     }
     else
     {
-        data = MeasuredData::create("file", config.trackerLabel,
+        data = MeasuredData::create("file",
+                                    config.trackerLabel,
+                                    trackerDataCollector->getName(),
                                     config.outputFile);
     }
 
@@ -241,29 +249,14 @@ void Validator::showTarget()
     setShowingTarget(true);
 }
 
-void Validator::startTrackerDataCollector(const std::string &command,
-                                          const TrackerConfig &conf)
+void Validator::startTrackerDataCollector()
 {
-    if (trackerDataCollector != nullptr)
-    {
-        delete trackerDataCollector;
-    }
-    trackerDataCollector = TrackerDataCollector::create(command,
-                                                        *gazePosition,
-                                                        conf);
     trackerDataCollector->run();
 }
 
 void Validator::stopTrackerDataCollector()
 {
-    if (trackerDataCollector == nullptr)
-    {
-        return;
-    }
-
     trackerDataCollector->stop();
-    delete trackerDataCollector;
-    trackerDataCollector = nullptr;
 }
 
 std::pair<unsigned int, unsigned int> Validator::getCursorPos() const

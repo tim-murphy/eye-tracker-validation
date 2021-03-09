@@ -19,6 +19,12 @@ class GazepointGP3Collector
                           const TrackerConfig &config)
         : ThreadTrackerCollector(store, config)
     {}
+
+    const std::string& getName() const
+    {
+        static const std::string name = "Gazepoint GP3";
+        return name;
+    }
 };
 
 # endif // defined GAZEPOINTGP3COLLECTOR_H

@@ -8,7 +8,7 @@
 
 #include "ScreenPositionStore.h"
 
-#include <thread>
+#include <string>
 
 class DummyTrackerCollector
     : public ThreadTrackerCollector
@@ -19,6 +19,12 @@ class DummyTrackerCollector
   public:
     DummyTrackerCollector(ScreenPositionStore &store,
                           const TrackerConfig &config);
+
+    const std::string &getName() const
+    {
+        static const std::string name = "Mouse";
+        return name;
+    }
 };
 
 #endif // defined DUMMYTRACKERCOLLECTOR_H

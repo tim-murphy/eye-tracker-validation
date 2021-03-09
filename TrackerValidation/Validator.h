@@ -93,11 +93,11 @@ class Validator
     void startUI(int* argcp, char** argvp);
     void stopUI();
 
-    // start/stop the gaze tracker data collector
-    // @param tracker the tracker being used in this experiment
+    // start the gaze tracker data collector
     // @throws std::runtime_error if the tracker couldn't start
-    void startTrackerDataCollector(const std::string &tracker,
-                                   const TrackerConfig &config);
+    void startTrackerDataCollector();
+
+    // stop the gaze tracker data collector
     void stopTrackerDataCollector();
 
     // a public wrapper to the cursor position setter as this may

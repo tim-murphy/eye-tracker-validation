@@ -10,14 +10,19 @@
 class MeasuredData
 {
   private:
-    // A human-readable name for the tracker being used. This is intentionally
+    // A human-readable label for the tracker being used. This is intentionally
     // unrestricted to allow for custom labels for the same tracker if, for
     // example, testing is done with different settings.
-    std::string name;
+    std::string label;
+
+    // A label given for the tracker, usually provided by the
+    // TrackerDataCollector instance. Allows the raw data to be grouped more
+    // easily.
+    std::string trackerName;
 
   protected:
     // constructor hidden as this is using a factory pattern
-    MeasuredData(std::string trackerName);
+    MeasuredData(const std::string &label, const std::string &trackerName);
 
   public:
     virtual ~MeasuredData();
@@ -39,11 +44,13 @@ class MeasuredData
     // @throws std::runtime_error if type does not match a known type.
     // @param path the filesystem path to the store, or "" if not applicable
     static MeasuredData *create(const std::string &type,
+                                const std::string &label,
                                 const std::string &trackerName,
                                 std::string path = "");
 
     // -- getters -- //
-    const std::string &getName() const;
+    const std::string &getLabel() const;
+    const std::string &getTrackerName() const;
 };
 
 #endif // defined MEASUREDDATA_H

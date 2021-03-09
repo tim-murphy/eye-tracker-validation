@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
     try
     {
         Validator v = Validator(config);
-        v.startTrackerDataCollector(config.tracker, config.trackerConfig);
+        v.startTrackerDataCollector();
         v.startUI(&argc, argv); // this will stop when it has finished
 
         // processing happens here

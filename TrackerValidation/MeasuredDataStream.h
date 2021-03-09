@@ -19,7 +19,8 @@ class MeasuredDataStream : public MeasuredData
     std::ostream *finalOutStream;
 
   public:
-    MeasuredDataStream(std::string trackerName,
+    MeasuredDataStream(const std::string &label,
+                       const std::string &trackerName,
                        std::ostream &outstream);
 
     bool writeData(
