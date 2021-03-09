@@ -17,6 +17,7 @@ std::ostream &operator<<(std::ostream &str,
         << "  trackerlabel = " << config.trackerLabel << std::endl
         << "  tracker = " << config.tracker << std::endl
         << "  trackerConfig = " << config.trackerConfig << std::endl
+        << "  subject = " << config.subject << std::endl
         << "  outputFile = " << config.outputFile << std::endl;
     return str;
 }

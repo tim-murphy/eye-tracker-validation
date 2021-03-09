@@ -19,6 +19,7 @@ class MeasuredDataFile : public MeasuredDataStream
   public:
     MeasuredDataFile(const std::string &label,
                      const std::string &trackerName,
+                     const std::string &subject,
                      const std::string &filePath);
 
     ~MeasuredDataFile();

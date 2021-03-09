@@ -62,7 +62,10 @@ void printUsage(const char * const cmd)
                     << config.trackerConfig.ipAddress << ")" << std::endl
               << flag << "trackerport" << equals << "<n>"
                     << "\tIP port used by the tracker (default "
-                    << config.trackerConfig.ipPort << ")" << std::endl;
+                    << config.trackerConfig.ipPort << ")" << std::endl
+              << flag << "subject" << equals << "<s>"
+                    << "\t\tName or ID of the subject under test, or \"\" for a prompt (default \""
+                    << config.subject << "\")" << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -80,7 +83,7 @@ int main(int argc, char *argv[])
 
 #ifndef _WIN32
     // grab the config from the command line
-    static const char * const cmdShort = "c:hl:r:n:t:g:c:s:i:p:o:";
+    static const char * const cmdShort = "c:hl:r:n:t:g:c:s:i:p:o:u:";
     static const struct option cmdOpts[] = {
         {"help",        no_argument,       nullptr, 'h'},
         {"cols",        required_argument, nullptr, 'c'},
@@ -93,6 +96,7 @@ int main(int argc, char *argv[])
         {"trackerip",   required_argument, nullptr, 'i'},
         {"trackerport", required_argument, nullptr, 'p'},
         {"outputfile",  required_argument, nullptr, 'o'},
+        {"subject",     required_argument, nullptr, 'u'},
         {nullptr,    no_argument,       nullptr, 0}
     };
 
@@ -192,6 +196,17 @@ int main(int argc, char *argv[])
         else if (key == "system" || key == "tracker")
         {
             config.tracker = val;
+        }
+        else if (key == "subject")
+        {
+            config.subject = val;
+
+            // if not set, get from a prompt
+            while (config.subject == "")
+            {
+                std::cout << "Please enter a subject name or ID: " << std::flush;
+                std::getline(std::cin >> std::ws, config.subject);
+            }
         }
         else if (key == "trackerip")
         {

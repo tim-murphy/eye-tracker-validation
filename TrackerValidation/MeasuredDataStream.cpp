@@ -9,11 +9,12 @@
 
 MeasuredDataStream::MeasuredDataStream(const std::string &label,
                                        const std::string &trackerName,
+                                       const std::string &subject,
                                        std::ostream &str)
-    : MeasuredData(label, trackerName), finalOutStream(&str)
+    : MeasuredData(label, trackerName, subject), finalOutStream(&str)
 {
     // CSV header
-    outStream << "\"Label\",\"Tracker\",\"Timestamp\",\"Target-ID\","
+    outStream << "\"Label\",\"Subject\",\"Tracker\",\"Timestamp\",\"Target-ID\","
               << "\"Target-X\",\"Target-Y\","
               << "\"Actual-X\",\"Actual-Y\""
               << std::endl;
@@ -53,6 +54,7 @@ bool MeasuredDataStream::writeData(
 #endif
 
     outStream << "\"" << getLabel() << "\","
+              << "\"" << getSubject() << "\","
               << "\"" << getTrackerName() << "\","
               << "\"" << std::put_time(&buffer, "%F %T") << "\","
               << targetNumber << ","

@@ -20,9 +20,14 @@ class MeasuredData
     // easily.
     std::string trackerName;
 
+    // The name or ID of the subject under test.
+    std::string subject;
+
   protected:
     // constructor hidden as this is using a factory pattern
-    MeasuredData(const std::string &label, const std::string &trackerName);
+    MeasuredData(const std::string &label,
+                 const std::string &trackerName,
+                 const std::string &subject);
 
   public:
     virtual ~MeasuredData();
@@ -46,11 +51,13 @@ class MeasuredData
     static MeasuredData *create(const std::string &type,
                                 const std::string &label,
                                 const std::string &trackerName,
+                                const std::string &subject,
                                 std::string path = "");
 
     // -- getters -- //
-    const std::string &getLabel() const;
-    const std::string &getTrackerName() const;
+    const std::string &getLabel(void) const;
+    const std::string &getTrackerName(void) const;
+    const std::string &getSubject(void) const;
 };
 
 #endif // defined MEASUREDDATA_H

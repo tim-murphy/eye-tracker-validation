@@ -36,13 +36,15 @@ Validator::Validator(const ValidatorConfig &conf)
     {
         data = MeasuredData::create("cout",
                                     config.trackerLabel,
-                                    trackerDataCollector->getName());
+                                    trackerDataCollector->getName(),
+                                    config.subject);
     }
     else
     {
         data = MeasuredData::create("file",
                                     config.trackerLabel,
                                     trackerDataCollector->getName(),
+                                    config.subject,
                                     config.outputFile);
     }
 

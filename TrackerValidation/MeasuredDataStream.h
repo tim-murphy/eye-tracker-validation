@@ -21,6 +21,7 @@ class MeasuredDataStream : public MeasuredData
   public:
     MeasuredDataStream(const std::string &label,
                        const std::string &trackerName,
+                       const std::string &subject,
                        std::ostream &outstream);
 
     bool writeData(

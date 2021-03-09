@@ -10,8 +10,9 @@
 #include <stdexcept>
 
 MeasuredData::MeasuredData(const std::string &label,
-                           const std::string &trackerName)
-    : label(label), trackerName(trackerName)
+                           const std::string &trackerName,
+                           const std::string &subject)
+    : label(label), trackerName(trackerName), subject(subject)
 {}
 
 MeasuredData::~MeasuredData()
@@ -20,14 +21,19 @@ MeasuredData::~MeasuredData()
     writeBuffer();
 }
 
-const std::string &MeasuredData::getLabel() const
+const std::string &MeasuredData::getLabel(void) const
 {
     return label;
 }
 
-const std::string &MeasuredData::getTrackerName() const
+const std::string &MeasuredData::getTrackerName(void) const
 {
     return trackerName;
+}
+
+const std::string &MeasuredData::getSubject(void) const
+{
+    return subject;
 }
 
 void MeasuredData::writeBuffer()
@@ -36,15 +42,16 @@ void MeasuredData::writeBuffer()
 MeasuredData *MeasuredData::create(const std::string &type,
                                    const std::string &label,
                                    const std::string &trackerName,
+                                   const std::string &subject,
                                    std::string path)
 {
     if (type == "cout")
     {
-        return new MeasuredDataStream(label, trackerName, std::cout);
+        return new MeasuredDataStream(label, trackerName, subject, std::cout);
     }
     else if (type == "file")
     {
-        return new MeasuredDataFile(label, trackerName, path);
+        return new MeasuredDataFile(label, trackerName, subject, path);
     }
     else
     {

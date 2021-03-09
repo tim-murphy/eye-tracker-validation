@@ -20,6 +20,7 @@ class ValidatorConfig
     std::string outputFile;
     std::string trackerLabel;
     std::string tracker;
+    std::string subject;
     TrackerConfig trackerConfig;
 
     ValidatorConfig(unsigned int columns = 5,
@@ -29,12 +30,13 @@ class ValidatorConfig
                     std::string targType = "crosshairbullseye",
                     std::string trackerLabel = "dummy",
                     std::string tracker = "mouse",
+                    std::string subject = "test_user",
                     std::string outputFile = "",
                     TrackerConfig trackerConfig = TrackerConfig("127.0.0.1", 4242))
         : cols(columns), rows(rows), repeats(repeats),
           targetSize(targetSize), targType(targType),
           trackerLabel(trackerLabel), tracker(tracker),
-          trackerConfig(trackerConfig)
+          trackerConfig(trackerConfig), subject(subject)
     {}
 
     friend std::ostream& operator<<(std::ostream & str,

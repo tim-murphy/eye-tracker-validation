@@ -152,7 +152,7 @@ unsigned int GPClient::GPClientThread (GPClient *ptr)
     FD_ZERO(&set);
     FD_SET(ipsocket, &set);
     struct timeval timeout{2,1}; // 2 seconds
-    select(ipsocket, 0, &set, 0, &timeout);
+    select(static_cast<int>(ipsocket), 0, &set, 0, &timeout);
 
     if (set.fd_count == 0)
     {
@@ -242,7 +242,7 @@ rxstr.erase(0, delimiter_index+2);
         #endif // not defined _WIN32
         if (0 != send(ipsocket, ptr->_tx_buffer.at(i).c_str(), static_cast<int>(ptr->_tx_buffer.at(i).size()), flags))
         {
-          std::cerr << "Socket error for msg: " << ptr->_tx_buffer.at(i) << std::endl;
+          // this is not always an error, so we won't do anything. General socket connection errors are caught elsewhere.
         }
       }      
       ptr->_tx_buffer.clear();
