@@ -55,5 +55,9 @@ _do_ change dependencies, you'll need to run `cmake .` from the root directory
 again.
 
 # Design Overview
+
+## Data and Process Flow
 ![High-level Overview](./docs/diagrams/Tracker_validation_flowchart.svg)
-![Object Relation Overview](./docs/diagrams/Tracker_validation_uml.svg)
+
+## Object Relations
+![Object Relations Overview](./docs/diagrams/Tracker_validation_uml.svg)
