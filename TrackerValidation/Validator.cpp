@@ -3,6 +3,7 @@
 
 #include "Validator.h"
 
+#include "common.h"
 #include "ScreenPositionStore.h"
 #include "MeasuredData.h"
 #include "ValidatorUIOpenGL.h"
@@ -304,7 +305,7 @@ void Validator::setTargetPos(unsigned int index)
     std::pair<unsigned int, unsigned int> colRowPair = indexToColRow(index);
 
     // from this, define the bounding box based on the screen res.
-    std::pair<unsigned int, unsigned int> screenRes = ui->getScreenRes();
+    std::pair<unsigned int, unsigned int> screenRes = common::getScreenRes();
     unsigned int cellWidth = screenRes.first / getDimensions().first;
     unsigned int cellHeight = screenRes.second / getDimensions().second;
 

@@ -3,6 +3,7 @@
 
 #include "Validator.h"
 
+#include "common.h"
 #include "TrackerConfig.h"
 #include "ValidatorConfig.h"
 
@@ -233,6 +234,10 @@ int main(int argc, char *argv[])
         printUsage(argv[0]);
         return EXIT_FAILURE;
     }
+
+    std::pair<unsigned int, unsigned int> screenRes = common::getScreenRes();
+    std::cout << "Screen resolution: " << screenRes.first << "x"
+              << screenRes.second << std::endl;
 
     std::cout << config << std::endl;
 

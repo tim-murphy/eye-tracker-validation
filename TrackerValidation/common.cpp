@@ -28,14 +28,19 @@ std::pair<unsigned int, unsigned int> common::getScreenRes()
     std::pair<unsigned int, unsigned int> screenRes;
 
 #ifdef _WIN32
-    RECT screen;
-
-    if (!GetWindowRect(GetDesktopWindow(), &screen))
+    HMONITOR activeMon = MonitorFromWindow(GetActiveWindow(),
+                                           MONITOR_DEFAULTTONEAREST);
+    MONITORINFO monInfo;
+    monInfo.cbSize = sizeof(monInfo);
+    if (GetMonitorInfo(activeMon, &monInfo) == 0)
     {
         throw std::runtime_error("Could not get screen resolution");
     }
 
-    screenRes = std::make_pair(screen.right, screen.bottom);
+    unsigned int horiz = (monInfo.rcMonitor.right - monInfo.rcMonitor.left);
+    unsigned int vert = (monInfo.rcMonitor.bottom - monInfo.rcMonitor.top);
+
+    screenRes = std::make_pair(horiz, vert);
 #else
     Display *d = XOpenDisplay(nullptr);
     Screen *s = nullptr;

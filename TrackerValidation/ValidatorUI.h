@@ -12,10 +12,6 @@ class ValidatorUI
   private:
     unsigned int targSize;
     std::string targType;
-    static std::pair<unsigned int, unsigned int> screenRes;
-
-    // calculate the screen resolution.
-    static void setScreenRes();
 
   public:
     ValidatorUI(unsigned int targetSize,
@@ -43,7 +39,6 @@ class ValidatorUI
     // -- getters and setters -- //
     unsigned int getTargetSize() const;
     const std::string &getTargetType() const;
-    static const std::pair<unsigned int, unsigned int> &getScreenRes();
 };
 
 # endif // defined VALIDATORUI_H

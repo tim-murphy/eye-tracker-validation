@@ -3,7 +3,7 @@
 
 #include "GazepointGP3Collector.h"
 
-#include "ValidatorUI.h" // for screen resolution
+#include "common.h"
 
 #include "gazepoint/GPClient.h"
 #include <iostream>
@@ -29,7 +29,7 @@ void GazepointGP3Collector::collectData()
     client.client_connect();
 
     // screen config
-    std::pair<unsigned int, unsigned int> screenRes = ValidatorUI::getScreenRes();
+    std::pair<unsigned int, unsigned int> screenRes = common::getScreenRes();
     std::stringstream screenConfig;
     screenConfig << "<SET ID=\"SCREEN_SIZE\" X=\"0\" Y=\"0\" WIDTH=\""
                  << screenRes.first << "\" HEIGHT=\""

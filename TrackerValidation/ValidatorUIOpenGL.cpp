@@ -70,7 +70,6 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
             glutReshapeWindow(res.first, res.second);
             glutPositionWindow(0, 0);
             glutFullScreen();
-            glutSwapBuffers();
             ui->fullscreen = true;
         }
         break;
