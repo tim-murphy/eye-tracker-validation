@@ -5,6 +5,7 @@
 
 // trackers
 #include "DummyTrackerCollector.h"
+#include "Eyelink1000PlusCollector.h"
 #include "GazepointGP3Collector.h"
 
 #include <stdexcept>
@@ -27,6 +28,10 @@ TrackerDataCollector *TrackerDataCollector::create(
     if (tracker == "mouse" || tracker == "dummy")
     {
         return new DummyTrackerCollector(store, config);
+    }
+    else if (tracker == "eyelink")
+    {
+        return new Eyelink1000PlusCollector(store, config);
     }
     else if (tracker == "GP3" || tracker == "gp3")
     {
