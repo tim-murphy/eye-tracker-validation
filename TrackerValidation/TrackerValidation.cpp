@@ -60,11 +60,9 @@ void printUsage(const char * const cmd)
                     << "\t\tthe tracker being tested (\"mouse\" or \"GP3\")" << std::endl
                     << "\t\t\t\t(default \"" << config.tracker << "\")" << std::endl
               << flag << "trackerip" << equals << "<s>"
-                    << "\t\tIP address used by the tracker (default "
-                    << config.trackerConfig.ipAddress << ")" << std::endl
+                    << "\t\tIP address used by the tracker (tracker default if not set)" << std::endl
               << flag << "trackerport" << equals << "<n>"
-                    << "\tIP port used by the tracker (default "
-                    << config.trackerConfig.ipPort << ")" << std::endl
+                    << "\tIP port used by the tracker (tracker default if not set)" << std::endl
               << flag << "subject" << equals << "<s>"
                     << "\t\tName or ID of the subject under test, or \"\" for a prompt (default \""
                     << config.subject << "\")" << std::endl;
@@ -162,6 +160,10 @@ int main(int argc, char *argv[])
     }
 #endif // not defined _WIN32
 
+    // if we don't configure any IP settings, use the defaults
+    bool trackerIPAddressConfigured = false;
+    bool trackerIPPortConfigured = false;
+
     // parse the command line arguments
     // using C++11 syntax for wider compatibility
     // FIXME add bounds checking
@@ -215,10 +217,12 @@ int main(int argc, char *argv[])
         else if (key == "trackerip")
         {
             config.trackerConfig.ipAddress = val;
+            trackerIPAddressConfigured = true;
         }
         else if (key == "trackerport")
         {
             config.trackerConfig.ipPort = std::atoi(val.c_str());
+            trackerIPPortConfigured = true;
         }
         else if (key == "help")
         {
@@ -229,6 +233,25 @@ int main(int argc, char *argv[])
         {
             std::cerr << "Error: Invalid argument: " << key << std::endl;
             configSuccess = false;
+        }
+    }
+
+    // load tracker default IP config
+    // FIXME move this to the tracker class
+    std::map<std::string, std::pair<std::string, unsigned int> > defaultIP;
+    defaultIP["gp3"] = std::make_pair("127.0.0.1", 4242);
+    defaultIP["GP3"] = defaultIP["gp3"];
+    defaultIP["eyelink"] = std::make_pair("100.1.1.1", 0);
+
+    if (defaultIP.find(config.tracker) != defaultIP.end())
+    {
+        if (!trackerIPAddressConfigured)
+        {
+            config.trackerConfig.ipAddress = defaultIP[config.tracker].first;
+        }
+        if (!trackerIPPortConfigured)
+        {
+            config.trackerConfig.ipPort = defaultIP[config.tracker].second;
         }
     }
 
