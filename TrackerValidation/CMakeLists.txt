@@ -35,9 +35,15 @@ add_executable(${MAINEXE} ${MAINSRC})
 list(APPEND EXELIBS ${SOURCESLIB})
 
 add_subdirectory("gazepoint")
+list(APPEND EXELIBS "GPClient")
+
+target_include_directories(${SOURCESLIB} PUBLIC "eyelink")
+if (WIN32)
+    list(APPEND EXELIBS ${CMAKE_SOURCE_DIR}/TrackerValidation/eyelink/eyelink_core64.lib)
+endif()
+
 add_subdirectory("freeglut-3.2.1")
 target_include_directories(${SOURCESLIB} PUBLIC "freeglut-3.2.1/include")
-list(APPEND EXELIBS "GPClient")
 list(APPEND EXELIBS "freeglut_static")
 
 find_package(Threads REQUIRED)
