@@ -6,6 +6,7 @@
 #include "common.h"
 #include "TrackerConfig.h"
 #include "ValidatorConfig.h"
+#include "version.h"
 
 #include <iostream>
 #include <map>
@@ -71,8 +72,10 @@ void printUsage(const char * const cmd)
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Gaze tracker validation tool" << std::endl
-              << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-" << std::endl;
+    std::cout << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << std::endl
+              << "Gaze tracker validation tool" << std::endl
+              << "Version: " << softwareVersion() << std::endl
+              << "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << std::endl;
 
     // default config
     ValidatorConfig config;

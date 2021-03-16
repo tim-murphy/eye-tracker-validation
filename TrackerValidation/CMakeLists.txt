@@ -9,6 +9,18 @@ add_compile_definitions(FREEGLUT_BUILD_STATIC_LIBS)
 add_compile_definitions(FREEGLUT_STATIC)
 add_compile_definitions(FREEGLUT_LIB_PRAGMAS=0)
 
+# Version information (use git hash)
+find_package(Git QUIET)
+execute_process(
+    COMMAND "${GIT_EXECUTABLE}" describe --always HEAD
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    RESULT_VARIABLE unused
+    OUTPUT_VARIABLE GIT_HASH
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "Current git hash: ${GIT_HASH}")
+add_definitions(-DLATEST_GIT_HASH=${GIT_HASH})
+
 # OpenGL policy - use GLVND instead of LEGACY
 if (POLICY CMP0072)
     cmake_policy (SET CMP0072 OLD)
@@ -57,5 +69,5 @@ add_executable(${TESTEXE} ${TESTSRC})
 target_link_libraries(${TESTEXE} ${EXELIBS})
 add_test(UnitTests ${TESTEXE})
 add_test(CompileTests "${CMAKE_COMMAND}" --build "${CMAKE_SOURCES_DIR}" --target "${TESTEXE}")
-SET_TESTS_PROPERTIES(UnitTests PROPERTIES DEPENDS CompileTests)
+set_tests_properties(UnitTests PROPERTIES DEPENDS CompileTests)
 
