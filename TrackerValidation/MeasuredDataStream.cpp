@@ -16,6 +16,7 @@ MeasuredDataStream::MeasuredDataStream(const std::string &label,
     // CSV header
     outStream << "\"Label\",\"Subject\",\"Tracker\",\"Timestamp\",\"Target-ID\","
               << "\"Target-X\",\"Target-Y\","
+              << "\"Cursor-X\",\"Cursor-Y\","
               << "\"Actual-X\",\"Actual-Y\""
               << std::endl;
 }
@@ -39,10 +40,9 @@ void MeasuredDataStream::writeBuffer()
 bool MeasuredDataStream::writeData(
     std::chrono::time_point<std::chrono::system_clock> timestamp,
     unsigned int targetNumber,
-    unsigned int xTarget,
-    unsigned int yTarget,
-    unsigned int xActual,
-    unsigned int yActual)
+    unsigned int xTarget, unsigned int yTarget,
+    unsigned int xCursor, unsigned int yCursor,
+    unsigned int xActual, unsigned int yActual)
 {
     // format the timestamp
     std::time_t ts = std::chrono::system_clock::to_time_t(timestamp);
@@ -58,10 +58,9 @@ bool MeasuredDataStream::writeData(
               << "\"" << getTrackerName() << "\","
               << "\"" << std::put_time(&buffer, "%F %T") << "\","
               << targetNumber << ","
-              << xTarget << ","
-              << yTarget << ","
-              << xActual << ","
-              << yActual << std::endl;
+              << xTarget << "," << yTarget << ","
+              << xCursor << "," << yCursor << ","
+              << xActual << "," << yActual << std::endl;
 
     return true;
 }
