@@ -5,6 +5,8 @@
 
 #include "ThreadTrackerCollector.h"
 
+#include <iostream>
+
 ThreadTrackerCollector::~ThreadTrackerCollector()
 {
     stop();
@@ -20,7 +22,7 @@ void ThreadTrackerCollector::run()
 
     processRunning = true;
 
-    collectionThread = std::thread(&ThreadTrackerCollector::collectData, this);
+    collectionThread = std::thread(&ThreadTrackerCollector::collectWrapper, this);
 }
 
 void ThreadTrackerCollector::stop()
@@ -34,4 +36,17 @@ void ThreadTrackerCollector::stop()
     processRunning = false;
 
     collectionThread.join();
+}
+
+void ThreadTrackerCollector::collectWrapper()
+{
+    try
+    {
+        collectData();
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+        throw;
+    }
 }

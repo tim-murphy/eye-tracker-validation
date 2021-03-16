@@ -19,8 +19,9 @@ void Eyelink1000PlusCollector::collectData()
     const int mode = (config.ipPort == 0 ? CONNECT_MODE : DUMMY_MODE);
 
     // this function needs a non-const pointer :(
-    char ipAddress[16]; memset(ipAddress, 0, sizeof(ipAddress));
-    strncpy(ipAddress, config.ipAddress.c_str(), sizeof(ipAddress));
+    char ipAddress[16];
+    memset(ipAddress, 0, sizeof(ipAddress));
+    strncpy_s(ipAddress, config.ipAddress.c_str(), sizeof(ipAddress));
     ipAddress[sizeof(ipAddress) - 1] = '\0'; // ensure ending in null
     if (set_eyelink_address(ipAddress) != 0)
     {
@@ -33,21 +34,12 @@ void Eyelink1000PlusCollector::collectData()
         throw std::runtime_error("Could not connect to " + getName());
     }
 
-    if (mode == DUMMY_MODE)
-    {
-        eyelink_dummy_open();
-    }
-    else
-    {
-        eyelink_open();
-    }
-
-    // limit the amount of data recorded to improve performance
-    eyecmd_printf("link_sample_data = LEFT,RIGHT");
-
     // set the screen resolution
     std::pair<unsigned int, unsigned int> res = common::getScreenRes();
     eyecmd_printf("screen_pixel_coords = 0 0 %i %i", res.first, res.second);
+
+    // eyecmd_printf can take up to 500ms to process
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // start sending samples through the link
     // note: params are 1=enable, 0=disable, in this order:
@@ -55,9 +47,12 @@ void Eyelink1000PlusCollector::collectData()
     //  - write events to EDF file
     //  - send samples through link
     //  - send events through link
-    if (start_recording(0, 0, 1, 0) != 0)
+    int err = start_recording(0, 0, 1, 0);
+    if (err != 0)
     {
-        throw std::runtime_error("Could not start tracker " + getName());
+        throw std::runtime_error("Could not connect to tracker " + getName()
+                                 + " at " + config.ipAddress + " (error "
+                                 + std::to_string(err).c_str() + ")");
     }
 
     if (!eyelink_wait_for_block_start(100, 1, 0))
@@ -65,12 +60,12 @@ void Eyelink1000PlusCollector::collectData()
         throw std::runtime_error("No data available for tracker " + getName());
     }
 
-    // FIXME change this to int if we can make it pixel coords
     ALL_DATA buf;
     memset(&buf, 0, sizeof(buf));
 
     if (DUMMY_MODE)
     {
+        // if we're faking a connection, fake some valid data while we're at it
         buf.is.flags = SAMPLE_LEFT + SAMPLE_RIGHT;
         buf.is.gx[0] = 880;
         buf.is.gx[1] = 882;
@@ -92,13 +87,9 @@ void Eyelink1000PlusCollector::collectData()
             {
                 int bitmask = (eye == LEFT_EYE ? SAMPLE_LEFT : SAMPLE_RIGHT);
                 validData[eye] = (buf.is.flags & bitmask) != 0;
-            }
-
-            for (int eye = LEFT_EYE; eye <= RIGHT_EYE; ++eye)
-            {
-                // FIXME do we need to divide these by eyelink_position_prescaler?
-                xPos[eye] = buf.is.gx[eye];
-                yPos[eye] = buf.is.gy[eye];
+            
+                xPos[eye] = buf.is.gx[eye] / eyelink_position_prescaler();
+                yPos[eye] = buf.is.gy[eye] / eyelink_position_prescaler();
 
                 if (xPos[eye] == MISSING_DATA || yPos[eye] == MISSING_DATA)
                 {
