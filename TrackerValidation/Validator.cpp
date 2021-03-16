@@ -136,34 +136,36 @@ void Validator::setGazePos(std::pair<unsigned int, unsigned int> pos)
 
 bool Validator::recordMeasurement()
 {
-    // if the cursor didn't click the target, ignore it.
-    if (!cursorOverTarget())
-    {
-        return false;
-    }
+    bool success = false;
 
-    std::chrono::time_point<std::chrono::system_clock> currTime
-        = std::chrono::system_clock::now();
-
-    // lock both objects together - we want the data to be as close
-    // as we can
+    // lock both objects together - we want the data to be as close as we can
     gazePosition->lock();
     cursorPosition->lock();
-    std::pair<unsigned int, unsigned int>tPos = getTargetPos();
-    std::pair<unsigned int, unsigned int>cPos = getGazePos();
+
+    // if the cursor didn't click the target, ignore it.
+    if (cursorOverTarget())
+    {
+        std::chrono::time_point<std::chrono::system_clock> currTime
+            = std::chrono::system_clock::now();
+
+        std::pair<unsigned int, unsigned int> tPos = getTargetPos();
+        std::pair<unsigned int, unsigned int> cPos = getCursorPos();
+        std::pair<unsigned int, unsigned int> gPos = getGazePos();
+
+        if (data->writeData(currTime, getTargetIndex(),
+                            tPos.first, tPos.second,
+                            cPos.first, cPos.second,
+                            gPos.first, gPos.second))
+        {
+            ++testCount[getTargetIndex()];
+            success = true;
+        }
+    }
+
     gazePosition->unlock();
     cursorPosition->unlock();
 
-    if (data->writeData(currTime, getTargetIndex(),
-                        tPos.first, tPos.second,
-                        cPos.first, cPos.second))
-    {
-        ++testCount[getTargetIndex()];
-        return true;
-    }
-
-    // if we get here, the measurement wasn't recorded.
-    return false;
+    return success;
 }
 
 void Validator::run()

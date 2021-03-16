@@ -27,10 +27,9 @@ class MeasuredDataStream : public MeasuredData
     bool writeData(
         std::chrono::time_point<std::chrono::system_clock> timestamp,
         unsigned int targetNumber,
-        unsigned int xTarget,
-        unsigned int yTarget,
-        unsigned int xActual,
-        unsigned int yActual);
+        unsigned int xTarget, unsigned int yTarget,
+        unsigned int xCursor, unsigned int yCursor,
+        unsigned int xActual, unsigned int yActual);
 
     virtual void writeBuffer();
 };
