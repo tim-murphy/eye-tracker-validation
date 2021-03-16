@@ -32,7 +32,7 @@ class ValidatorConfig
                     std::string tracker = "mouse",
                     std::string subject = "Test user",
                     std::string outputFile = "",
-                    TrackerConfig trackerConfig = TrackerConfig("0.0.0.1", 0))
+                    TrackerConfig trackerConfig = TrackerConfig("127.0.0.1", 0))
         : cols(columns), rows(rows), repeats(repeats),
           targetSize(targetSize), targType(targType),
           trackerLabel(trackerLabel), tracker(tracker),
