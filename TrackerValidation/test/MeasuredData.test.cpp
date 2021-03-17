@@ -10,9 +10,9 @@ TEST_CASE("MeasuredData factory", "[MeasuredData]")
     {
         MeasuredData *data = MeasuredData::create("cout", "label", "tracker", "subject", "path");
 
-        REQUIRE(data->getLabel() == "label");
-        REQUIRE(data->getTrackerName() == "tracker");
-        REQUIRE(data->getSubject() == "subject");
+        CHECK(data->getLabel() == "label");
+        CHECK(data->getTrackerName() == "tracker");
+        CHECK(data->getSubject() == "subject");
 
         delete data;
     }
@@ -30,8 +30,12 @@ TEST_CASE("MeasuredData factory", "[MeasuredData]")
 
     SECTION("Create MeasuredDataFile")
     {
-        char tmpFile[64];
+        char tmpFile[L_tmpnam];
+        #ifndef _WIN32
+        REQUIRE(tmpnam(tmpFile) == tmpFile); // returns pointer to tmpFile on success
+        #else
         REQUIRE(tmpnam_s(tmpFile, sizeof(tmpFile)) == 0);
+        #endif
 
         MeasuredData* data = MeasuredData::create("file", "label", "tracker", "subject", tmpFile);
 
