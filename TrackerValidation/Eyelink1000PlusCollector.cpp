@@ -7,6 +7,7 @@
 #include "eyelink/core_expt.h"
 #include "eyelink/eyelink.h"
 
+#include <cstring>
 #include <stdexcept>
 
 void Eyelink1000PlusCollector::collectData()
@@ -20,8 +21,8 @@ void Eyelink1000PlusCollector::collectData()
 
     // this function needs a non-const pointer :(
     char ipAddress[16];
-    memset(ipAddress, 0, sizeof(ipAddress));
-    strncpy_s(ipAddress, config.ipAddress.c_str(), sizeof(ipAddress));
+    std::memset(ipAddress, 0, sizeof(ipAddress));
+    strncpy(ipAddress, config.ipAddress.c_str(), sizeof(ipAddress));
     ipAddress[sizeof(ipAddress) - 1] = '\0'; // ensure ending in null
     if (set_eyelink_address(ipAddress) != 0)
     {
@@ -61,7 +62,7 @@ void Eyelink1000PlusCollector::collectData()
     }
 
     ALL_DATA buf;
-    memset(&buf, 0, sizeof(buf));
+    std::memset(&buf, 0, sizeof(buf));
 
     if (DUMMY_MODE)
     {
