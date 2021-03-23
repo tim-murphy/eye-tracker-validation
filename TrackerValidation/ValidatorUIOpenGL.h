@@ -34,11 +34,12 @@ class ValidatorUIOpenGL : public ValidatorUI
 
     // private constructor as this is a factory design
     ValidatorUIOpenGL(unsigned int targetSize, const std::string &targType,
-                      int *argcp, char **argvp);
+                      int *argcp, char **argvp, bool previewMode);
   public:
     static ValidatorUIOpenGL *create(unsigned int targetSize,
                                      const std::string &targType,
-                                     int *argcp, char **argvp);
+                                     int *argcp, char **argvp,
+                                     bool previewMode = false);
 
     // returns nullptr if this has not yet been created
     static ValidatorUIOpenGL *getInstance();
@@ -52,7 +53,8 @@ class ValidatorUIOpenGL : public ValidatorUI
     void run();
     void stop();
 
-    void showTarget(std::pair<unsigned int, unsigned int> pos);
+    void showTarget(std::pair<unsigned int, unsigned int> pos,
+                    bool drawScreen = true);
 
     bool inTestRoutine() const;
 

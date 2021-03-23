@@ -35,6 +35,7 @@ void printUsage(const char * const cmd)
 
     std::cout << "Usage: " << cmd << " [options]" << std::endl
               << flag << "help\t\t\tdisplay this help text" << std::endl
+              << flag << "preview\t\t\tdisplay all target locations on screen" << std::endl
               << flag << "cols" << equals << "<n>"
                     << "\t\tsplit screen into <n> columns (default "
                     << config.cols << ")" << std::endl
@@ -66,7 +67,7 @@ void printUsage(const char * const cmd)
                     << "\tIP port used by the tracker (default "
                     << config.trackerConfig.ipPort << ")" << std::endl
               << flag << "subject" << equals << "<s>"
-                    << "\t\tName or ID of the subject under test, or \"\" for a prompt (default \""
+                    << "\t\tname or ID of the subject under test, or \"\" for a prompt (default \""
                     << config.subject << "\")" << std::endl;
 }
 
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
     static const char * const cmdShort = "c:hl:r:n:t:g:c:s:i:p:o:u:";
     static const struct option cmdOpts[] = {
         {"help",        no_argument,       nullptr, 'h'},
+        {"preview",     no_argument,       nullptr, 'x'},
         {"cols",        required_argument, nullptr, 'c'},
         {"rows",        required_argument, nullptr, 'r'},
         {"repeats",     required_argument, nullptr, 'n'},
@@ -224,6 +226,10 @@ int main(int argc, char *argv[])
         {
             // this will trigger the help message to be shown
             configSuccess = false;
+        }
+        else if (key == "preview")
+        {
+            config.preview = true;
         }
         else
         {
