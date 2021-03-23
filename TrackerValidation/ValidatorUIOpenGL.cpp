@@ -52,7 +52,6 @@ void ValidatorUIOpenGL::drawScreen()
     }
     else
     {
-        unsigned int x = 0;
         for (auto pos : ui->currTargetPos)
         {
             ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
