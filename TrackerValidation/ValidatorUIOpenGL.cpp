@@ -44,13 +44,22 @@ void ValidatorUIOpenGL::drawScreen()
     }
 
     // redraw the screen
-    for (int x = 0; x != ui->currTargetPos.size(); ++x)
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (!ui->inTestRoutine())
     {
-        const std::pair<unsigned int, unsigned int> &pos
-            = ui->currTargetPos.at(x);
-        std::cout << "showing target " << x << " at pos (" << pos.first << "," << pos.second << ")" << std::endl;
-        ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
+        ui->showSplashScreen();
     }
+    else
+    {
+        unsigned int x = 0;
+        for (auto pos : ui->currTargetPos)
+        {
+            std::cout << "showing target " << ++x << " at pos (" << pos.first << "," << pos.second << ")" << std::endl;
+            ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
+        }
+    }
+    glutSwapBuffers();
 }
 
 void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
@@ -82,6 +91,8 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
         }
         break;
     }
+
+    glutPostRedisplay();
 }
 void ValidatorUIOpenGL::resize(int width, int height)
 {
@@ -118,8 +129,6 @@ void ValidatorUIOpenGL::showSplashScreen()
     {
         glutBitmapCharacter(font, *c);
     }
-
-    glutSwapBuffers();
 }
 
 bool ValidatorUIOpenGL::mouseClickEvent(int button, int state)
@@ -163,6 +172,7 @@ ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
     glutKeyboardFunc(this->keypress);
     glutReshapeFunc(this->resize);
     showSplashScreen();
+    glutPostRedisplay();
 }
 
 void ValidatorUIOpenGL::setIdleFunc(void (*func)(void))
@@ -202,16 +212,14 @@ void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos,
     {
         currTargetPos.clear();
     }
-    else
-    {
-        currTargetPos.push_back(std::make_pair(pos.first, pos.second));
-    }
+    
+    currTargetPos.push_back(std::make_pair(pos.first, pos.second));
 
     drawTarget(pos.first, pos.second, getTargetSize());
 
     if (drawScreen)
     {
-        glutSwapBuffers();
+        glutPostRedisplay();
     }
 }
 
