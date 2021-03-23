@@ -55,7 +55,6 @@ void ValidatorUIOpenGL::drawScreen()
         unsigned int x = 0;
         for (auto pos : ui->currTargetPos)
         {
-            std::cout << "showing target " << ++x << " at pos (" << pos.first << "," << pos.second << ")" << std::endl;
             ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
         }
     }
@@ -90,9 +89,10 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
             ui->fullscreen = true;
         }
         break;
-    }
 
-    glutPostRedisplay();
+      default:
+        glutPostRedisplay();
+    }
 }
 void ValidatorUIOpenGL::resize(int width, int height)
 {
