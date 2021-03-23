@@ -17,13 +17,14 @@ TEST_CASE("ValidatorConfig", "[ValidatorConfig]")
         REQUIRE(config.tracker == "mouse");
         REQUIRE(config.subject == "Test user");
         REQUIRE(config.outputFile == "");
+        CHECK(config.preview == false);
         REQUIRE(config.trackerConfig.ipAddress == "127.0.0.1");
         REQUIRE(config.trackerConfig.ipPort == 4242);
     }
 
     SECTION("Other constructor values")
     {
-        ValidatorConfig config(1, 2, 3, 4, "a", "b", "c", "d", "e",
+        ValidatorConfig config(1, 2, 3, 4, "a", "b", "c", "d", "e", true,
                                TrackerConfig("10.0.0.1", 8080));
 
         REQUIRE(config.cols == 1);
@@ -35,6 +36,7 @@ TEST_CASE("ValidatorConfig", "[ValidatorConfig]")
         REQUIRE(config.tracker == "c");
         REQUIRE(config.subject == "d");
         REQUIRE(config.outputFile == "e");
+        CHECK(config.preview == true);
         REQUIRE(config.trackerConfig.ipAddress == "10.0.0.1");
         REQUIRE(config.trackerConfig.ipPort == 8080);
     }

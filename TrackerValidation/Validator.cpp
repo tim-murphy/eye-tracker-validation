@@ -109,7 +109,7 @@ void Validator::startUI(int *argcp, char **argvp)
     delete ui;
 
     ui = ValidatorUIOpenGL::create(getTargetSize(), getTargetType(),
-                                   argcp, argvp);
+                                   argcp, argvp, config.preview);
     ui->setIdleFunc(&idleFunc);
     ui->setMouseFunc(&onClickFunc);
     ui->run();
@@ -231,26 +231,38 @@ std::pair<unsigned int, unsigned int>
 
 void Validator::showTarget()
 {
-    // sanity check - don't try to show a new target if we've already finished.
-    if (testingDone())
+    // in preview mode, we show all targets
+    if (config.preview)
     {
-        throw std::runtime_error(
-            "Cannot show new target - testing already complete.");
+        for (unsigned int x = 0; x < testCount.size(); ++x)
+        {
+            setTargetPos(x);
+            ui->showTarget(getTargetPos(), x+1 == testCount.size(), x == 0);
+        }
     }
-
-    // Pick a random position which has not been fully tested yet.
-    // Note that we're not seeding the random number generator as it's not
-    // really necessary - we don't care if each participant gets the same
-    // 'random' sequence - and it removes the need for ctime or another
-    // seeding dependency.
-    unsigned int randomIndex;
-    do
+    else
     {
-        randomIndex = rand() % testCount.size();
-    } while (testCount[randomIndex] >= getReps());
+        // sanity check - don't try to show a new target if we've finished.
+        if (testingDone())
+        {
+            throw std::runtime_error(
+                "Cannot show new target - testing already complete.");
+        }
 
-    setTargetPos(randomIndex);
-    ui->showTarget(getTargetPos());
+        // Pick a random position which has not been fully tested yet.
+        // Note that we're not seeding the random number generator as it's not
+        // really necessary - we don't care if each participant gets the same
+        // 'random' sequence - and it removes the need for ctime or another
+        // seeding dependency.
+        unsigned int randomIndex;
+        do
+        {
+            randomIndex = rand() % testCount.size();
+        } while (testCount[randomIndex] >= getReps());
+
+        setTargetPos(randomIndex);
+        ui->showTarget(getTargetPos());
+    }
     setShowingTarget(true);
 }
 

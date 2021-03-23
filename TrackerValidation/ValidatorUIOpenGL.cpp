@@ -14,12 +14,14 @@
 // -- singleton initialisation -- //
 ValidatorUIOpenGL *ValidatorUIOpenGL::create(unsigned int targetSize,
                                              const std::string &targType,
-                                             int *argcp, char **argvp)
+                                             int *argcp, char **argvp,
+                                             bool previewMode)
 {
     const std::lock_guard<std::mutex> lock(createLock);
     if (inst == nullptr)
     {
-        inst = new ValidatorUIOpenGL(targetSize, targType, argcp, argvp);
+        inst = new ValidatorUIOpenGL(targetSize, targType, argcp, argvp,
+                                     previewMode);
     }
 
     return inst;
@@ -42,7 +44,20 @@ void ValidatorUIOpenGL::drawScreen()
     }
 
     // redraw the screen
-    ui->showTarget(ui->currTargetPos);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (!ui->inTestRoutine())
+    {
+        ui->showSplashScreen();
+    }
+    else
+    {
+        for (auto pos : ui->currTargetPos)
+        {
+            ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
+        }
+    }
+    glutSwapBuffers();
 }
 
 void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
@@ -73,6 +88,9 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
             ui->fullscreen = true;
         }
         break;
+
+      default:
+        glutPostRedisplay();
     }
 }
 void ValidatorUIOpenGL::resize(int width, int height)
@@ -110,15 +128,13 @@ void ValidatorUIOpenGL::showSplashScreen()
     {
         glutBitmapCharacter(font, *c);
     }
-
-    glutSwapBuffers();
 }
 
 bool ValidatorUIOpenGL::mouseClickEvent(int button, int state)
 {
-    if (!fullscreen)
+    // ignore clicks on the splash screen or in preview mode
+    if (!fullscreen || inPreviewMode())
     {
-        // we've clicked the mouse at the splash screen - ignore it
         return false;
     }
 
@@ -131,16 +147,16 @@ void ValidatorUIOpenGL::drawTarget(unsigned int x, unsigned int y,
     std::unique_ptr<FixationTarget> t(
         FixationTarget::create(getTargetType(), diameter));
     t->drawOpenGL(x, y);
-    currTargetPos = std::make_pair(x, y);
 }
 
 // -- end UI static functions --//
 
 ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
                                      const std::string &targetType,
-                                     int *argcp, char **argvp)
-    : ValidatorUI(targetSize, targetType),
-      fullscreen(false), currTargetPos(std::make_pair(0,0))
+                                     int *argcp, char **argvp,
+                                     bool previewMode)
+    : ValidatorUI(targetSize, targetType, previewMode),
+      fullscreen(false), currTargetPos()
 {
     static constexpr std::pair<int, int> windowRes = std::make_pair(640, 480);
 
@@ -155,6 +171,7 @@ ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
     glutKeyboardFunc(this->keypress);
     glutReshapeFunc(this->resize);
     showSplashScreen();
+    glutPostRedisplay();
 }
 
 void ValidatorUIOpenGL::setIdleFunc(void (*func)(void))
@@ -177,16 +194,32 @@ void ValidatorUIOpenGL::stop()
     glutLeaveMainLoop();
 }
 
-void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos)
+void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos,
+                                   bool drawScreen, bool firstTarget)
 {
     if (!inTestRoutine())
     {
         return;
     }
 
+    if (!inPreviewMode())
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    if (firstTarget)
+    {
+        currTargetPos.clear();
+    }
+    
+    currTargetPos.push_back(std::make_pair(pos.first, pos.second));
+
     drawTarget(pos.first, pos.second, getTargetSize());
 
-    glutSwapBuffers();
+    if (drawScreen)
+    {
+        glutPostRedisplay();
+    }
 }
 
 bool ValidatorUIOpenGL::inTestRoutine() const

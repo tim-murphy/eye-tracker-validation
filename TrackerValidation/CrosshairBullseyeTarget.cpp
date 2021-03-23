@@ -47,8 +47,6 @@ void CrosshairBullseyeTarget::drawCircleOpenGL(unsigned int x, unsigned int y,
 
 void CrosshairBullseyeTarget::drawOpenGL(unsigned int x, unsigned int y)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-
     // first draw the outer circle (white)
     glColor4d(1.0, 1.0, 1.0, 1.0);
     drawCircleOpenGL(x, y, getOuterDiameter());
