@@ -30,8 +30,17 @@ Validator::Validator(const ValidatorConfig &conf)
                                                         config.trackerConfig);
 
     // initialise the test counts
-    testCount.resize(
-        (static_cast<size_t>(config.cols) * static_cast<size_t>(config.rows)), 0);
+    // if we're using "corners" target location, increase each dimension by 1
+    size_t cols = static_cast<size_t>(config.cols);
+    size_t rows = static_cast<size_t>(config.rows);
+
+    if (config.targLocation == "corners")
+    {
+        ++cols;
+        ++rows;
+    }
+
+    testCount.resize(cols * rows, 0);
 
     if (config.outputFile == "")
     {
@@ -223,8 +232,18 @@ bool Validator::testingDone() const
 std::pair<unsigned int, unsigned int>
     Validator::indexToColRow(unsigned int index) const
 {
-    unsigned int row = index / (getDimensions().first);
-    unsigned int col = index % (getDimensions().first);
+    // these are the configured dimensions
+    std::pair<unsigned int, unsigned int> dims = getDimensions();
+
+    // if we're using "corners" target location, increase each dimension by 1
+    if (config.targLocation == "corners")
+    {
+        ++dims.first;
+        // we don't need to `++dims.second` as it's never used
+    }
+
+    unsigned int row = index / (dims.first);
+    unsigned int col = index % (dims.first);
 
     return std::make_pair(col, row);
 }
@@ -320,11 +339,27 @@ void Validator::setTargetPos(unsigned int index)
 
     // from this, define the bounding box based on the screen res.
     std::pair<unsigned int, unsigned int> screenRes = common::getScreenRes();
+
+    // subtract the padding (x2 as padded on both sides)
+    screenRes.first -= (config.padding * 2);
+    screenRes.second -= (config.padding * 2);
+
     unsigned int cellWidth = screenRes.first / getDimensions().first;
     unsigned int cellHeight = screenRes.second / getDimensions().second;
 
     unsigned int xTarget = (cellWidth * colRowPair.first) + (cellWidth / 2);
     unsigned int yTarget = (cellHeight * colRowPair.second) + (cellHeight / 2);
+
+    // adjust for padding
+    xTarget += config.padding;
+    yTarget += config.padding;
+
+    // adjust if using corners cell location
+    if (config.targLocation == "corners")
+    {
+        xTarget -= (cellWidth / 2);
+        yTarget -= (cellHeight / 2);
+    }
 
     // the target will be in the middle of this cell
     targetPosition->setCurrentPosition(std::make_pair(xTarget, yTarget));

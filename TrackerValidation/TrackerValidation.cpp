@@ -45,12 +45,18 @@ void printUsage(const char * const cmd)
               << flag << "repeats" << equals << "<n>"
                     << "\t\tnumber of times to test each point (default "
                     << config.repeats << ")" << std::endl
+              << flag << "padding" << equals << "<n>"
+                    << "\t\tmargin in pixels from screen edges which will be excluded in target location calculations" << std::endl
+                    << "\t\t\t\t(default " << config.padding << ")" << std::endl
               << flag << "targtype" << equals << "<s>"
                     << "\t\tthe type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
                     << "\t\t\t\t(default \"" << config.targType << "\")" << std::endl
               << flag << "targsize" << equals << "<n>"
                     << "\t\tdiameter of target in pixels (default "
                     << config.targetSize << ")" << std::endl
+              << flag << "targlocation" << equals << "<s>"
+                    << "\twhere in the grid cell to place the targets (\"middle\" or \"corners\")" << std::endl
+                    << "\t\t\t\t(default \"" << config.targLocation << "\")" << std::endl
               << flag << "label" << equals << "<s>"
                     << "\t\tlabel for this experiment (default \""
                     << config.trackerLabel << "\")" << std::endl
@@ -95,8 +101,10 @@ int main(int argc, char *argv[])
         {"cols",        required_argument, nullptr, 'c'},
         {"rows",        required_argument, nullptr, 'r'},
         {"repeats",     required_argument, nullptr, 'n'},
+        {"padding",     required_argument, nullptr, 'm'},
         {"targsize",    required_argument, nullptr, 't'},
         {"targtype",    required_argument, nullptr, 'g'},
+        {"targlocation",required_argument, nullptr, 'z'},
         {"label",       required_argument, nullptr, 'l'},
         {"tracker",     required_argument, nullptr, 's'},
         {"trackerip",   required_argument, nullptr, 'i'},
@@ -183,6 +191,20 @@ int main(int argc, char *argv[])
         {
             config.repeats = std::atoi(val.c_str());
         }
+        else if (key == "padding")
+        {
+            int intval = std::atoi(val.c_str());
+            if (intval < 0)
+            {
+                std::cerr << "ERROR: padding value must be positive"
+                          << std::endl;
+                configSuccess = false;
+            }
+            else
+            {
+                config.padding = static_cast<unsigned int>(intval);
+            }
+        }
         else if (key == "targsize")
         {
             config.targetSize = std::atoi(val.c_str());
@@ -191,9 +213,22 @@ int main(int argc, char *argv[])
         {
             config.targType = val;
         }
+        else if (key == "targlocation")
+        {
+            if (val == "middle" || val == "corners")
+            {
+                config.targLocation = val;
+            }
+            else
+            {
+                std::cerr << "ERROR: targlocation must be either \"middle\" "
+                          << "or \"corners\"" << std::endl;
+                configSuccess = false;
+            }
+        }
         else if (key == "label")
         {
-            config.trackerLabel =val;
+            config.trackerLabel = val;
         }
         else if (key == "outputfile")
         {
