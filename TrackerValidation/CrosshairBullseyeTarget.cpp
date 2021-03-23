@@ -22,7 +22,7 @@ unsigned int CrosshairBullseyeTarget::getOuterDiameter(void) const
 }
 
 void CrosshairBullseyeTarget::drawCircleOpenGL(unsigned int x, unsigned int y,
-                                         unsigned int diameter)
+                                               unsigned int diameter)
 {
     glBegin(GL_TRIANGLE_FAN);
 
@@ -36,8 +36,8 @@ void CrosshairBullseyeTarget::drawCircleOpenGL(unsigned int x, unsigned int y,
         double sigma = n * common::pi * 2.0 / static_cast<double>(segments);
 
         std::pair<double, double> pos = OpenGLPixelToPosition(
-            static_cast<unsigned int>(x + (radius * cos(sigma))),
-            static_cast<unsigned int>(y + (radius * sin(sigma))));
+            static_cast<int>(x + (radius * cos(sigma))),
+            static_cast<int>(y + (radius * sin(sigma))));
 
         glVertex2d(pos.first, pos.second);
     }
