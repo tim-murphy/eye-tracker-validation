@@ -35,7 +35,7 @@ void printUsage(const char * const cmd)
 
     std::cout << "Usage: " << cmd << " [options]" << std::endl
               << flag << "help\t\t\tdisplay this help text" << std::endl
-              << flag << "preview\t\t\tdisplay all target locations on screen" << std::endl
+              << flag << "preview\t\tdisplay all target locations on screen" << std::endl
               << flag << "cols" << equals << "<n>"
                     << "\t\tsplit screen into <n> columns (default "
                     << config.cols << ")" << std::endl

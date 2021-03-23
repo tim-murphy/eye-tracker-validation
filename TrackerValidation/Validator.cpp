@@ -237,7 +237,7 @@ void Validator::showTarget()
         for (unsigned int x = 0; x < testCount.size(); ++x)
         {
             setTargetPos(x);
-            ui->showTarget(getTargetPos(),  x+1 == testCount.size());
+            ui->showTarget(getTargetPos(), x+1 == testCount.size(), x == 0);
         }
     }
     else

@@ -9,6 +9,7 @@
 #include "ValidatorUI.h"
 
 #include <mutex>
+#include <vector>
 
 class ValidatorUIOpenGL : public ValidatorUI
 {
@@ -26,7 +27,9 @@ class ValidatorUIOpenGL : public ValidatorUI
     static void resize(int width, int height);
     void showSplashScreen();
 
-    std::pair<unsigned int, unsigned int> currTargetPos;
+    // collection of target positions. Normally this will only have one item
+    // but we may want to show multiple targets at once.
+    std::vector<std::pair<unsigned int, unsigned int> > currTargetPos;
 
     // draw a target at pixel location (x, y) with the given radius.
     void drawTarget(unsigned int x, unsigned int y,
@@ -54,17 +57,13 @@ class ValidatorUIOpenGL : public ValidatorUI
     void stop();
 
     void showTarget(std::pair<unsigned int, unsigned int> pos,
-                    bool drawScreen = true);
+                    bool drawScreen = true, bool firstTarget = true);
 
     bool inTestRoutine() const;
 
     // mouseclick event helpers - check if button/state combination is
     // considered a valid mouse click
     bool mouseClickEvent(int button, int state);
-
-    // convert pixel location into OpenGL relative position [-1.0, 1.0]
-    static std::pair<double, double> pixelToPosition(
-        unsigned int x, unsigned int y);
 };
 
 # endif // defined VALIDATORUIOPENGL_H

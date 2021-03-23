@@ -44,9 +44,12 @@ void ValidatorUIOpenGL::drawScreen()
     }
 
     // redraw the screen
-    if (!ui->inPreviewMode())
+    for (int x = 0; x != ui->currTargetPos.size(); ++x)
     {
-        ui->showTarget(ui->currTargetPos);
+        const std::pair<unsigned int, unsigned int> &pos
+            = ui->currTargetPos.at(x);
+        std::cout << "showing target " << x << " at pos (" << pos.first << "," << pos.second << ")" << std::endl;
+        ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
     }
 }
 
@@ -136,7 +139,6 @@ void ValidatorUIOpenGL::drawTarget(unsigned int x, unsigned int y,
     std::unique_ptr<FixationTarget> t(
         FixationTarget::create(getTargetType(), diameter));
     t->drawOpenGL(x, y);
-    currTargetPos = std::make_pair(x, y);
 }
 
 // -- end UI static functions --//
@@ -146,7 +148,7 @@ ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
                                      int *argcp, char **argvp,
                                      bool previewMode)
     : ValidatorUI(targetSize, targetType, previewMode),
-      fullscreen(false), currTargetPos(std::make_pair(0,0))
+      fullscreen(false), currTargetPos()
 {
     static constexpr std::pair<int, int> windowRes = std::make_pair(640, 480);
 
@@ -184,7 +186,7 @@ void ValidatorUIOpenGL::stop()
 }
 
 void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos,
-                                   bool drawScreen)
+                                   bool drawScreen, bool firstTarget)
 {
     if (!inTestRoutine())
     {
@@ -194,6 +196,15 @@ void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos,
     if (!inPreviewMode())
     {
         glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    if (firstTarget)
+    {
+        currTargetPos.clear();
+    }
+    else
+    {
+        currTargetPos.push_back(std::make_pair(pos.first, pos.second));
     }
 
     drawTarget(pos.first, pos.second, getTargetSize());
