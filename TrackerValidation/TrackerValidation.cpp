@@ -35,6 +35,7 @@ void printUsage(const char * const cmd)
 
     std::cout << "Usage: " << cmd << " [options]" << std::endl
               << flag << "help\t\t\tdisplay this help text" << std::endl
+              << flag << "preview\t\tdisplay all target locations on screen" << std::endl
               << flag << "cols" << equals << "<n>"
                     << "\t\tsplit screen into <n> columns (default "
                     << config.cols << ")" << std::endl
@@ -44,12 +45,18 @@ void printUsage(const char * const cmd)
               << flag << "repeats" << equals << "<n>"
                     << "\t\tnumber of times to test each point (default "
                     << config.repeats << ")" << std::endl
+              << flag << "padding" << equals << "<n>"
+                    << "\t\tmargin in pixels from screen edges which will be excluded in target location calculations" << std::endl
+                    << "\t\t\t\t(default " << config.padding << ")" << std::endl
               << flag << "targtype" << equals << "<s>"
                     << "\t\tthe type of target (\"circle\" or \"crosshairbullseye\")" << std::endl
                     << "\t\t\t\t(default \"" << config.targType << "\")" << std::endl
               << flag << "targsize" << equals << "<n>"
                     << "\t\tdiameter of target in pixels (default "
                     << config.targetSize << ")" << std::endl
+              << flag << "targlocation" << equals << "<s>"
+                    << "\twhere in the grid cell to place the targets (\"middle\" or \"corners\")" << std::endl
+                    << "\t\t\t\t(default \"" << config.targLocation << "\")" << std::endl
               << flag << "label" << equals << "<s>"
                     << "\t\tlabel for this experiment (default \""
                     << config.trackerLabel << "\")" << std::endl
@@ -64,7 +71,7 @@ void printUsage(const char * const cmd)
               << flag << "trackerport" << equals << "<n>"
                     << "\tIP port used by the tracker (tracker default if not set)" << std::endl
               << flag << "subject" << equals << "<s>"
-                    << "\t\tName or ID of the subject under test, or \"\" for a prompt (default \""
+                    << "\t\tname or ID of the subject under test, or \"\" for a prompt (default \""
                     << config.subject << "\")" << std::endl;
 }
 
@@ -88,11 +95,14 @@ int main(int argc, char *argv[])
     static const char * const cmdShort = "c:hl:r:n:t:g:c:s:i:p:o:u:";
     static const struct option cmdOpts[] = {
         {"help",        no_argument,       nullptr, 'h'},
+        {"preview",     no_argument,       nullptr, 'x'},
         {"cols",        required_argument, nullptr, 'c'},
         {"rows",        required_argument, nullptr, 'r'},
         {"repeats",     required_argument, nullptr, 'n'},
+        {"padding",     required_argument, nullptr, 'm'},
         {"targsize",    required_argument, nullptr, 't'},
         {"targtype",    required_argument, nullptr, 'g'},
+        {"targlocation",required_argument, nullptr, 'z'},
         {"label",       required_argument, nullptr, 'l'},
         {"tracker",     required_argument, nullptr, 's'},
         {"trackerip",   required_argument, nullptr, 'i'},
@@ -183,6 +193,20 @@ int main(int argc, char *argv[])
         {
             config.repeats = std::atoi(val.c_str());
         }
+        else if (key == "padding")
+        {
+            int intval = std::atoi(val.c_str());
+            if (intval < 0)
+            {
+                std::cerr << "ERROR: padding value must be positive"
+                          << std::endl;
+                configSuccess = false;
+            }
+            else
+            {
+                config.padding = static_cast<unsigned int>(intval);
+            }
+        }
         else if (key == "targsize")
         {
             config.targetSize = std::atoi(val.c_str());
@@ -191,9 +215,22 @@ int main(int argc, char *argv[])
         {
             config.targType = val;
         }
+        else if (key == "targlocation")
+        {
+            if (val == "middle" || val == "corners")
+            {
+                config.targLocation = val;
+            }
+            else
+            {
+                std::cerr << "ERROR: targlocation must be either \"middle\" "
+                          << "or \"corners\"" << std::endl;
+                configSuccess = false;
+            }
+        }
         else if (key == "label")
         {
-            config.trackerLabel =val;
+            config.trackerLabel = val;
         }
         else if (key == "outputfile")
         {
@@ -228,6 +265,10 @@ int main(int argc, char *argv[])
         {
             // this will trigger the help message to be shown
             configSuccess = false;
+        }
+        else if (key == "preview")
+        {
+            config.preview = true;
         }
         else
         {

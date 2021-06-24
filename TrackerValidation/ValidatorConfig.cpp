@@ -12,12 +12,15 @@ std::ostream &operator<<(std::ostream &str,
         << "  cols = " << config.cols << std::endl
         << "  rows = " << config.rows << std::endl
         << "  repeats = " << config.repeats << std::endl
+        << "  padding = " << config.padding << std::endl
         << "  targsize = " << config.targetSize << std::endl
         << "  targtype = " << config.targType << std::endl
+        << "  targlocation = " << config.targLocation << std::endl
         << "  trackerlabel = " << config.trackerLabel << std::endl
         << "  tracker = " << config.tracker << std::endl
         << "  trackerConfig = " << config.trackerConfig << std::endl
         << "  subject = " << config.subject << std::endl
-        << "  outputFile = " << config.outputFile << std::endl;
+        << "  outputFile = " << config.outputFile << std::endl
+        << "  preview = " << (config.preview ? "true" : "false") << std::endl;
     return str;
 }

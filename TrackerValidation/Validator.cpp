@@ -30,8 +30,17 @@ Validator::Validator(const ValidatorConfig &conf)
                                                         config.trackerConfig);
 
     // initialise the test counts
-    testCount.resize(
-        (static_cast<size_t>(config.cols) * static_cast<size_t>(config.rows)), 0);
+    // if we're using "corners" target location, increase each dimension by 1
+    size_t cols = static_cast<size_t>(config.cols);
+    size_t rows = static_cast<size_t>(config.rows);
+
+    if (config.targLocation == "corners")
+    {
+        ++cols;
+        ++rows;
+    }
+
+    testCount.resize(cols * rows, 0);
 
     if (config.outputFile == "")
     {
@@ -109,7 +118,7 @@ void Validator::startUI(int *argcp, char **argvp)
     delete ui;
 
     ui = ValidatorUIOpenGL::create(getTargetSize(), getTargetType(),
-                                   argcp, argvp);
+                                   argcp, argvp, config.preview);
     ui->setIdleFunc(&idleFunc);
     ui->setMouseFunc(&onClickFunc);
     ui->run();
@@ -223,34 +232,56 @@ bool Validator::testingDone() const
 std::pair<unsigned int, unsigned int>
     Validator::indexToColRow(unsigned int index) const
 {
-    unsigned int row = index / (getDimensions().first);
-    unsigned int col = index % (getDimensions().first);
+    // these are the configured dimensions
+    std::pair<unsigned int, unsigned int> dims = getDimensions();
+
+    // if we're using "corners" target location, increase each dimension by 1
+    if (config.targLocation == "corners")
+    {
+        ++dims.first;
+        // we don't need to `++dims.second` as it's never used
+    }
+
+    unsigned int row = index / (dims.first);
+    unsigned int col = index % (dims.first);
 
     return std::make_pair(col, row);
 }
 
 void Validator::showTarget()
 {
-    // sanity check - don't try to show a new target if we've already finished.
-    if (testingDone())
+    // in preview mode, we show all targets
+    if (config.preview)
     {
-        throw std::runtime_error(
-            "Cannot show new target - testing already complete.");
+        for (unsigned int x = 0; x < testCount.size(); ++x)
+        {
+            setTargetPos(x);
+            ui->showTarget(getTargetPos(), x+1 == testCount.size(), x == 0);
+        }
     }
-
-    // Pick a random position which has not been fully tested yet.
-    // Note that we're not seeding the random number generator as it's not
-    // really necessary - we don't care if each participant gets the same
-    // 'random' sequence - and it removes the need for ctime or another
-    // seeding dependency.
-    unsigned int randomIndex;
-    do
+    else
     {
-        randomIndex = rand() % testCount.size();
-    } while (testCount[randomIndex] >= getReps());
+        // sanity check - don't try to show a new target if we've finished.
+        if (testingDone())
+        {
+            throw std::runtime_error(
+                "Cannot show new target - testing already complete.");
+        }
 
-    setTargetPos(randomIndex);
-    ui->showTarget(getTargetPos());
+        // Pick a random position which has not been fully tested yet.
+        // Note that we're not seeding the random number generator as it's not
+        // really necessary - we don't care if each participant gets the same
+        // 'random' sequence - and it removes the need for ctime or another
+        // seeding dependency.
+        unsigned int randomIndex;
+        do
+        {
+            randomIndex = rand() % testCount.size();
+        } while (testCount[randomIndex] >= getReps());
+
+        setTargetPos(randomIndex);
+        ui->showTarget(getTargetPos());
+    }
     setShowingTarget(true);
 }
 
@@ -308,11 +339,27 @@ void Validator::setTargetPos(unsigned int index)
 
     // from this, define the bounding box based on the screen res.
     std::pair<unsigned int, unsigned int> screenRes = common::getScreenRes();
+
+    // subtract the padding (x2 as padded on both sides)
+    screenRes.first -= (config.padding * 2);
+    screenRes.second -= (config.padding * 2);
+
     unsigned int cellWidth = screenRes.first / getDimensions().first;
     unsigned int cellHeight = screenRes.second / getDimensions().second;
 
     unsigned int xTarget = (cellWidth * colRowPair.first) + (cellWidth / 2);
     unsigned int yTarget = (cellHeight * colRowPair.second) + (cellHeight / 2);
+
+    // adjust for padding
+    xTarget += config.padding;
+    yTarget += config.padding;
+
+    // adjust if using corners cell location
+    if (config.targLocation == "corners")
+    {
+        xTarget -= (cellWidth / 2);
+        yTarget -= (cellHeight / 2);
+    }
 
     // the target will be in the middle of this cell
     targetPosition->setCurrentPosition(std::make_pair(xTarget, yTarget));

@@ -12,13 +12,22 @@ class ValidatorUI
   private:
     unsigned int targSize;
     std::string targType;
+    bool preview;
 
   public:
     ValidatorUI(unsigned int targetSize,
-                const std::string &targetType);
+                const std::string &targetType,
+                bool previewMode = false);
 
     // display the target at the given (x,y) pixel location.
-    virtual void showTarget(std::pair<unsigned int, unsigned int> pos) = 0;
+    // @param pos (x, y) pixel co-ordinates for the center of the target
+    // @param drawScreen display target to screen (if drawing multiple targets,
+    //                   set this to false for all except the last call)
+    // @param firstTarget is this the first target to display for this set?
+    //                    (always true if only showing one target at a time)
+    virtual void showTarget(std::pair<unsigned int, unsigned int> pos,
+                            bool drawScreen = true,
+                            bool firstTarget = true) = 0;
 
     // set the idle routine (main processing)
     virtual void setIdleFunc(void (*func)(void)) = 0;
@@ -39,6 +48,7 @@ class ValidatorUI
     // -- getters and setters -- //
     unsigned int getTargetSize() const;
     const std::string &getTargetType() const;
+    bool inPreviewMode() const;
 };
 
 # endif // defined VALIDATORUI_H

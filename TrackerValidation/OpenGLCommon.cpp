@@ -4,8 +4,7 @@
 
 #include "common.h"
 
-std::pair<double, double> OpenGLPixelToPosition(
-    unsigned int xPixel, unsigned int yPixel)
+std::pair<double, double> OpenGLPixelToPosition(int xPixel, int yPixel)
 {
     // Can be done by 2 x (actual_pixel_value / max_pixel_value) - 1
     // for each axis.

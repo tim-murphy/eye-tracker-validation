@@ -4,8 +4,9 @@
 #include "ValidatorUI.h"
 
 ValidatorUI::ValidatorUI(unsigned int targetSize,
-                         const std::string &targetType)
-    :targSize(targetSize), targType(targetType)
+                         const std::string &targetType,
+                         bool previewMode)
+    :targSize(targetSize), targType(targetType), preview(previewMode)
 { }
 
 unsigned int ValidatorUI::getTargetSize() const
@@ -16,4 +17,9 @@ unsigned int ValidatorUI::getTargetSize() const
 const std::string &ValidatorUI::getTargetType() const
 {
     return targType;
+}
+
+bool ValidatorUI::inPreviewMode() const
+{
+    return preview;
 }
