@@ -64,7 +64,7 @@ void printUsage(const char * const cmd)
                     << "\t\tpath to file to write output data to, or leave empty to write to console" << std::endl
                     << "\t\t\t\t(default \"" << config.outputFile << "\")" << std::endl
               << flag << "tracker" << equals << "<s>"
-                    << "\t\tthe tracker being tested (\"mouse\" or \"GP3\")" << std::endl
+                    << "\t\tthe tracker being tested (\"mouse\", \"eyelink\" or \"GP3\")" << std::endl
                     << "\t\t\t\t(default \"" << config.tracker << "\")" << std::endl
               << flag << "trackerip" << equals << "<s>"
                     << "\t\tIP address used by the tracker (tracker default if not set)" << std::endl
