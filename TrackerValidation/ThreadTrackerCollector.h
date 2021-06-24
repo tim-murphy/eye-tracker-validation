@@ -14,6 +14,11 @@ class ThreadTrackerCollector
   private:
     // we will run the actual collection in a separate thread
     std::thread collectionThread;
+
+    // a wrapper around collectData to handle exceptions
+    void collectWrapper();
+
+    // the method which does the data collection
     virtual void collectData() = 0;
 
   public:
