@@ -27,6 +27,7 @@ DATA_COLS = {
 }
 
 PLOT_SIZE = (1920, 1080)
+PLOT_PADDING = 100
 PLOT_DPI = 100
 COLOURMAP = "nipy_spectral"
 
@@ -188,7 +189,7 @@ if __name__ == '__main__':
     ##########################
 
     plt.figure(figsize=(PLOT_SIZE[0]/PLOT_DPI, PLOT_SIZE[1]/PLOT_DPI), dpi=PLOT_DPI)
-    plt.axis([0, 1920, 0 ,1080])
+    plt.axis([-PLOT_PADDING, PLOT_SIZE[0]+PLOT_PADDING, -PLOT_PADDING ,PLOT_SIZE[1]+PLOT_PADDING])
     plt.gca().invert_yaxis()
     plt.subplots_adjust(left=0.05, right=0.70, top=0.825, bottom=0.175)
 
@@ -220,7 +221,7 @@ if __name__ == '__main__':
     for label in stats:
         s = stats[label]
         stats_text += label + "\n    accuracy = " + "{:.2f}".format(s[0]) + "px\n    precision = " + "{:.2f}".format(s[1]) + "\n\n"
-    plt.text(2000, 540, stats_text, fontsize=10, verticalalignment="top")
+    plt.text(2200, 440, stats_text, fontsize=10, verticalalignment="top")
 
     if graph_output_png is None:
         plt.show()
