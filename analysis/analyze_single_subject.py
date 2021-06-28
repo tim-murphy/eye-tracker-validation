@@ -212,7 +212,7 @@ if __name__ == '__main__':
             y_coords.append(coords[2])
         plt.scatter(x_coords, y_coords, marker='o', color=colour, s=5, label=label)
 
-    plt.suptitle("Single User Data", fontsize=40)
+    plt.suptitle("Measured Gaze Positions", fontsize=40)
     plt.title("Subject: " + subject, fontsize=30)
     plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1.01), title="Legend", fontsize="medium", title_fontsize="large")
 
