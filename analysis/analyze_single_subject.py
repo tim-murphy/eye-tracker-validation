@@ -4,10 +4,12 @@
 #  - calculate the precision
 
 import csv
+from math import sqrt
 import matplotlib.cm as pltcm
 import matplotlib.colors as pltcolors
 import matplotlib.pyplot as plt
 import os
+from statistics import mean, pstdev
 import sys
 
 DATA_COLS = {
@@ -30,6 +32,9 @@ COLOURMAP = "nipy_spectral"
 
 def printUsage():
     print("Usage: " + sys.argv[0] + " <data_csv> [<graph_output_png>]")
+
+def subjectToLabel(subj):
+    return subj[0] + " :: " + subj[1]
 
 if __name__ == '__main__':
     print("===================================")
@@ -144,9 +149,9 @@ if __name__ == '__main__':
 
     # FIXME do we need to do this?
     # remove the header rows
-    raw_data = [row for index, row in enumerate(raw_data) if index not in invalid_rows]
+    #raw_data = [row for index, row in enumerate(raw_data) if index not in invalid_rows]
 
-    print(str(len(raw_data)) + " data rows found")
+    print(str(len(raw_data) - len(invalid_rows)) + " data rows found")
     print(str(len(targets)) + " target locations found")
 
     print("")
@@ -157,13 +162,33 @@ if __name__ == '__main__':
     print("Subject data:")
     print(subject_data)
 
+    ############################
+    ## Statistics starts here ##
+    ############################
+
+    # calculate the accuracy and precision for each series
+    stats = {}
+    for i, subj in enumerate(subject_data):
+        label = subjectToLabel(subj)
+        distances = []
+        for coords in subject_data[subj]:
+            # use pythagoras to determine the distance
+            dist = sqrt((targets[coords[0]][0] - coords[1]) ** 2 + (targets[coords[0]][1] - coords[2]) ** 2)
+            distances.append(dist)
+
+        # for accuracy, calculate the mean pixel distance from the target.
+        # for precision, we calculate the standard deviation.
+
+        accuracy = mean(distances)
+        precision = pstdev(distances)
+        stats[label] = (accuracy, precision)
+
     ##########################
     ## Plotting starts here ##
     ##########################
 
     plt.figure(figsize=(PLOT_SIZE[0]/PLOT_DPI, PLOT_SIZE[1]/PLOT_DPI), dpi=PLOT_DPI)
     plt.axis([0, 1920, 0 ,1080])
-    # plt.axis('off')
     plt.gca().invert_yaxis()
     plt.subplots_adjust(left=0.05, right=0.70, top=0.825, bottom=0.175)
 
@@ -178,7 +203,7 @@ if __name__ == '__main__':
     for i, subj in enumerate(subject_data):
         colour = (colours.to_rgba(i))
         print("Plotting " + str(subj) + " with colour " + str(colour))
-        label = subj[0] + " :: " + subj[1]
+        label = subjectToLabel(subj)
         x_coords = []
         y_coords = []
         for coords in subject_data[subj]:
@@ -189,6 +214,13 @@ if __name__ == '__main__':
     plt.suptitle("Single User Data", fontsize=40)
     plt.title("Subject: " + subject, fontsize=30)
     plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1.01), title="Legend", fontsize="medium", title_fontsize="large")
+
+    # add the accuracy and precision data to the plot
+    stats_text = ""
+    for label in stats:
+        s = stats[label]
+        stats_text += label + "\n    accuracy = " + "{:.2f}".format(s[0]) + "px\n    precision = " + "{:.2f}".format(s[1]) + "\n\n"
+    plt.text(2000, 540, stats_text, fontsize=10, verticalalignment="top")
 
     if graph_output_png is None:
         plt.show()
