@@ -40,8 +40,10 @@ class MeasuredData
         unsigned int yTarget,
         unsigned int xCursor,
         unsigned int yCursor,
-        unsigned int xActual,
-        unsigned int yActual) = 0;
+        unsigned int xActualRight,
+        unsigned int yActualRight,
+        unsigned int xActualLeft,
+        unsigned int yActualLeft) = 0;
 
     // If using a buffer, write the buffered data to the datastore. If not
     // overloaded, this method is a no-op.

@@ -31,6 +31,8 @@ PLOT_PADDING = 100
 PLOT_DPI = 100
 COLOURMAP = "nipy_spectral"
 
+REMOVE_DUPLICATE_READINGS = True
+
 def printUsage():
     print("Usage: " + sys.argv[0] + " <data_csv> [<graph_output_png>]")
 
@@ -96,6 +98,13 @@ if __name__ == '__main__':
     subject = None
     invalid_rows = set()
     subject_data = {}
+    bad_data = {} # a count of the number of bad data rows for each identifier
+
+    # keep a record of the previous row values and remove duplicates (if
+    # that's what we want) as this means the eye tracker did not get any
+    # reading for that target.
+    prev_x = -1
+    prev_y = -1
     for index, row in enumerate(raw_data):
         # remove the header rows
         # note: we assume the row is a header if the last element is not a number
@@ -137,10 +146,23 @@ if __name__ == '__main__':
                   int(row[DATA_COLS["Actual-X"]]),\
                   int(row[DATA_COLS["Actual-Y"]]))
 
+        if not identifier in bad_data:
+            bad_data[identifier] = 0
+
+        if REMOVE_DUPLICATE_READINGS and coords[1] == prev_x and coords[2] == prev_y:
+            print("Ignoring duplicate data: " + str(coords))
+            invalid_rows.add(index)
+            bad_data[identifier] += 1
+            continue
+
+        prev_x = coords[1]
+        prev_y = coords[2]
+
         if coords[1] < 0 or coords[1] > PLOT_SIZE[0] or\
            coords[2] < 0 or coords[2] > PLOT_SIZE[1]:
             print("Ignoring invalid data: " + str(coords))
             invalid_rows.add(index)
+            bad_data[identifier] += 1
             continue
 
         if identifier in subject_data:
@@ -148,11 +170,8 @@ if __name__ == '__main__':
         else:
             subject_data[identifier] = [coords]
 
-    # FIXME do we need to do this?
-    # remove the header rows
-    #raw_data = [row for index, row in enumerate(raw_data) if index not in invalid_rows]
-
     print(str(len(raw_data) - len(invalid_rows)) + " data rows found")
+    print(str(len(bad_data)) + " invalid rows found")
     print(str(len(targets)) + " target locations found")
 
     print("")
@@ -182,7 +201,7 @@ if __name__ == '__main__':
 
         accuracy = mean(distances)
         precision = pstdev(distances)
-        stats[label] = (accuracy, precision)
+        stats[label] = (accuracy, precision, bad_data[subj])
 
     ##########################
     ## Plotting starts here ##
@@ -213,14 +232,16 @@ if __name__ == '__main__':
         plt.scatter(x_coords, y_coords, marker='o', color=colour, s=5, label=label)
 
     plt.suptitle("Measured Gaze Positions", fontsize=40)
-    plt.title("Subject: " + subject, fontsize=30)
+    plt.title("Subject: " + subject + ", Screen: 23.8in 1920x1080", fontsize=30)
     plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1.01), title="Legend", fontsize="medium", title_fontsize="large")
+    plt.xlabel("Screen x position (pixels)", fontsize=15)
+    plt.ylabel("Screen y position (pixels)", fontsize=15)
 
     # add the accuracy and precision data to the plot
     stats_text = ""
     for label in stats:
         s = stats[label]
-        stats_text += label + "\n    accuracy = " + "{:.2f}".format(s[0]) + "px\n    precision = " + "{:.2f}".format(s[1]) + "\n\n"
+        stats_text += label + "\n    accuracy = " + "{:.2f}".format(s[0]) + "px\n    precision = " + "{:.2f}".format(s[1]) + "\n    invalid readings = " + str(s[2]) + "\n"
     plt.text(2200, 440, stats_text, fontsize=10, verticalalignment="top")
 
     if graph_output_png is None:

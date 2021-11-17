@@ -12,6 +12,33 @@
 #include <stdexcept>
 #include <string>
 
+namespace
+{
+    std::pair<unsigned int, unsigned int> calculatePos(
+        bool valid,
+        double x,
+        double y,
+        std::pair<unsigned int, unsigned int> screenRes)
+    {
+        std::pair<unsigned int, unsigned int> pos = std::make_pair(
+            static_cast<unsigned int>(static_cast<double>(screenRes.first) *  x),
+            static_cast<unsigned int>(static_cast<double>(screenRes.second) * y));
+
+        // if the recording is invalid, don't use the values from the data packet
+        if (!valid || x < 0.0 || x > 1.0)
+        {
+            pos.first = common::invalidCoord;
+        }
+
+        if (!valid || y < 0.0 || y > 1.0)
+        {
+            pos.second = common::invalidCoord;
+        }
+
+        return pos;
+    }
+}
+
 void GazepointGP3Collector::collectData()
 {
     // send the following to get set up:
@@ -37,7 +64,8 @@ void GazepointGP3Collector::collectData()
 
     client.send_cmd(screenConfig.str());
     client.send_cmd("<SET ID=\"ENABLE_SEND_COUNTER\" STATE=\"1\" />");
-    client.send_cmd("<SET ID=\"ENABLE_SEND_POG_BEST\" STATE=\"1\" />");
+    client.send_cmd("<SET ID=\"ENABLE_SEND_POG_RIGHT\" STATE=\"1\" />");
+    client.send_cmd("<SET ID=\"ENABLE_SEND_POG_LEFT\" STATE=\"1\" />");
     client.send_cmd("<SET ID=\"ENABLE_SEND_DATA\" STATE=\"1\" />");
 
     while (isRunning())
@@ -49,8 +77,9 @@ void GazepointGP3Collector::collectData()
             // For efficiency sake, we assume the returned data is in the
             // correct format. This means we can avoid the overhead of an XML
             // parser and just pull out the data with regex :-)
+            // <REC CNT="151747" LPOGX="0.87396" LPOGY="0.02765" LPOGV="1" RPOGX="0.89497" RPOGY="0.77830" RPOGV="1" />
             static const std::regex r(
-                "^<REC CNT=\"(\\d+)\" BPOGX=\"([01]\\.\\d+)\" BPOGY=\"([01]\\.\\d+)\" BPOGV=\"1\" />$");
+                "^<REC CNT=\"(\\d+)\" LPOGX=\"([01]\\.\\d+)\" LPOGY=\"([01]\\.\\d+)\" LPOGV=\"([01])\" RPOGX=\"([01]\\.\\d+)\" RPOGY=\"([01]\\.\\d+)\" RPOGV=\"([01])\" />$");
             std::smatch matches;
 
             // regex_match throws a read access violation when the main
@@ -63,21 +92,19 @@ void GazepointGP3Collector::collectData()
                 // so we have ignored those values. The regex above will only
                 // match values [0,2), so we will exclude (1,2) below.
                 double id = std::stod(matches[1]);
-                double x = std::stod(matches[2]);
-                double y = std::stod(matches[3]);
+                double xLeft = std::stod(matches[2]);
+                double yLeft = std::stod(matches[3]);
+                bool validLeft = (std::string(matches[4])[0] == '1' ? true : false);
+                double xRight = std::stod(matches[5]);
+                double yRight = std::stod(matches[6]);
+                bool validRight = (std::string(matches[7])[0] == '1' ? true : false);
 
-                // exclude invalid values
-                if (x > 1.0 || y > 1.0)
-                {
-                    continue;
-                }
+                std::pair<unsigned int, unsigned int> gazeRight
+                    = ::calculatePos(validRight, xRight, yRight, screenRes);
+                std::pair<unsigned int, unsigned int> gazeLeft
+                    = ::calculatePos(validLeft, xLeft, yLeft, screenRes);
 
-                // convert the x,y fractions into pixels
-                unsigned int xPix = static_cast<unsigned int>(
-                    static_cast<double>(screenRes.first) *  x);
-                unsigned int yPix = static_cast<unsigned int>(
-                    static_cast<double>(screenRes.second) * y);
-                position.setCurrentPosition(std::make_pair(xPix, yPix), id);
+                position.setCurrentPositionRightLeft(gazeRight, gazeLeft, id);
             }
         }
         catch (std::exception &e)

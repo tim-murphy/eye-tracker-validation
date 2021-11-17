@@ -29,7 +29,8 @@ class MeasuredDataStream : public MeasuredData
         unsigned int targetNumber,
         unsigned int xTarget, unsigned int yTarget,
         unsigned int xCursor, unsigned int yCursor,
-        unsigned int xActual, unsigned int yActual);
+        unsigned int xActualRight, unsigned int yActualRight,
+        unsigned int xActualLeft, unsigned int yActualLeft);
 
     virtual void writeBuffer();
 };

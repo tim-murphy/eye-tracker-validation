@@ -79,8 +79,6 @@ void Eyelink1000PlusCollector::collectData()
     {
         if (eyelink_newest_sample(&buf))
         {
-            std::pair<unsigned int, unsigned int> gazePos;
-
             // flags is a bitfield. Bitmask SAMPLE_LEFT for left data
             // available, SAMPLE_RIGHT for right data available.
             bool validData[2];
@@ -92,30 +90,23 @@ void Eyelink1000PlusCollector::collectData()
                 xPos[eye] = buf.is.gx[eye] / eyelink_position_prescaler();
                 yPos[eye] = buf.is.gy[eye] / eyelink_position_prescaler();
 
-                if (xPos[eye] == MISSING_DATA || yPos[eye] == MISSING_DATA)
+                if (!validData[eye] || xPos[eye] == MISSING_DATA)
                 {
-                    validData[eye] = false;
+                    xPos[eye] = common::invalidCoord;
+                }
+
+                if (!validData[eye] || yPos[eye] == MISSING_DATA)
+                {
+                    yPos[eye] = common::invalidCoord;
                 }
             }
 
-            // if both eyes have data then use the average of the two
-            if (validData[LEFT_EYE] && validData[RIGHT_EYE])
-            {
-                gazePos.first = (xPos[LEFT_EYE] + xPos[RIGHT_EYE]) / 2;
-                gazePos.second = (yPos[LEFT_EYE] + yPos[RIGHT_EYE]) / 2;
-            }
-            else if (validData[LEFT_EYE])
-            {
-                gazePos.first = xPos[LEFT_EYE];
-                gazePos.second = yPos[LEFT_EYE];
-            }
-            else if (validData[RIGHT_EYE])
-            {
-                gazePos.first = xPos[RIGHT_EYE];
-                gazePos.second = yPos[RIGHT_EYE];
-            }
+            std::pair<unsigned int, unsigned int> gazePosRight
+                = std::make_pair(xPos[RIGHT_EYE], yPos[RIGHT_EYE]);
+            std::pair<unsigned int, unsigned int> gazePosLeft
+                = std::make_pair(xPos[LEFT_EYE], yPos[LEFT_EYE]);
 
-            position.setCurrentPosition(gazePos, buf.is.time);
+            position.setCurrentPositionRightLeft(gazePosRight, gazePosLeft, buf.is.time);
         }
     }
 

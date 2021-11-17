@@ -54,7 +54,7 @@ void DummyTrackerCollector::collectData()
         if (GetCursorPos(&pt))
         {
             unsigned int x = pt.x, y = pt.y;
-            position.setCurrentPosition(std::make_pair(x, y), ++sequence);
+            position.setCurrentPositionSingle(std::make_pair(x, y), ++sequence);
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }

@@ -1,0 +1,45 @@
+"Label","Subject","Tracker","Timestamp","Target-ID","Target-X","Target-Y","Cursor-X","Cursor-Y","Actual-X","Actual-Y"
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:17",1,1440,270,1438,272,1409,254
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:20",3,1440,810,1438,812,1416,766
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:25",2,480,810,480,808,478,756
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:27",0,480,270,477,270,467,264
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:29",1,1440,270,1440,270,1413,255
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:31",0,480,270,478,272,465,258
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:33",2,480,810,480,810,470,768
+"Specs headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:35:35",3,1440,810,1441,812,1418,773
+"Label","Subject","Tracker","Timestamp","Target-ID","Target-X","Target-Y","Cursor-X","Cursor-Y","Actual-X","Actual-Y"
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:38:53",1,1440,270,1439,272,1428,246
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:38:56",3,1440,810,1438,809,1404,843
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:38:58",2,480,810,479,809,414,788
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:39:01",0,480,270,482,272,492,223
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:39:06",1,1440,270,1440,268,1419,278
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:39:10",0,480,270,480,268,486,291
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:39:17",2,480,810,481,812,412,810
+"Specs headrest","Tim Test","Gazepoint GP3","2021-06-25 14:39:19",3,1440,810,1439,809,1473,796
+"Label","Subject","Tracker","Timestamp","Target-ID","Target-X","Target-Y","Cursor-X","Cursor-Y","Actual-X","Actual-Y"
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:01",1,1440,270,1440,268,1374,277
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:04",3,1440,810,1440,811,1444,759
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:06",2,480,810,479,812,453,753
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:09",0,480,270,478,270,462,187
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:11",1,1440,270,1439,272,1424,241
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:13",0,480,270,480,268,490,237
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:16",2,480,810,479,810,402,742
+"Specs no headrest","Tim Test","Gazepoint GP3","2021-06-25 14:49:24",3,1440,810,1440,808,1348,762
+"Label","Subject","Tracker","Timestamp","Target-ID","Target-X","Target-Y","Cursor-X","Cursor-Y","Actual-X","Actual-Y"
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:36",1,1440,270,1441,269,1467,275
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:38",3,1440,810,1438,809,2147482722,2147482403
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:43",2,480,810,481,812,512,798
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:46",0,480,270,479,272,503,288
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:48",1,1440,270,1439,271,1460,275
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:49",0,480,270,480,270,508,287
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:51",2,480,810,480,810,484,804
+"Specs no headrest 35mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 14:55:53",3,1440,810,1437,810,1450,833
+"Label","Subject","Tracker","Timestamp","Target-ID","Target-X","Target-Y","Cursor-X","Cursor-Y","Actual-X","Actual-Y"
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:00",1,1440,270,1442,272,1419,263
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:02",3,1440,810,1438,810,1419,800
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:06",2,480,810,479,808,494,762
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:08",0,480,270,481,270,489,259
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:10",1,1440,270,1439,272,1408,274
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:12",0,480,270,480,272,497,250
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:13",2,480,810,480,812,490,782
+"Specs headrest 25mm","Tim Test","SR Eyelink 1000 Plus","2021-06-25 16:06:17",3,1440,810,1438,810,1408,802

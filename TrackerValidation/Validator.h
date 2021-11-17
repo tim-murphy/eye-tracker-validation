@@ -55,8 +55,11 @@ class Validator
     // Get the current target position.
     std::pair<unsigned int, unsigned int> getTargetPos() const;
 
-    // Get the current gaze position.
-    std::pair<unsigned int, unsigned int> getGazePos() const;
+    // Get the current gaze position (single position).
+    std::pair<unsigned int, unsigned int> getGazePosSingle() const;
+
+    // Get the current gaze position (both eyes).
+    std::pair<std::pair<unsigned int, unsigned int>, std::pair<unsigned int, unsigned int> > getGazePosRightLeft() const;
 
     // Is the cursor of the current target?
     bool cursorOverTarget() const;
@@ -106,7 +109,8 @@ class Validator
 
     // a public wrapper to the gaze position setter as this may be
     // set by an external object
-    void setGazePos(std::pair<unsigned int, unsigned int> pos);
+    void setGazePos(std::pair<unsigned int, unsigned int> right,
+                    std::pair<unsigned int, unsigned int> left);
 
     // Record a measurement if the cursor is over the target.
     // @returns true if measurement was recorded.

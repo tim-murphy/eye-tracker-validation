@@ -135,12 +135,13 @@ void Validator::stopUI()
 
 void Validator::setCursorPos(std::pair<unsigned int, unsigned int> pos)
 {
-    cursorPosition->setCurrentPosition(pos);
+    cursorPosition->setCurrentPositionSingle(pos);
 }
 
-void Validator::setGazePos(std::pair<unsigned int, unsigned int> pos)
+void Validator::setGazePos(std::pair<unsigned int, unsigned int> right,
+                           std::pair<unsigned int, unsigned int> left)
 {
-    gazePosition->setCurrentPosition(pos);
+    gazePosition->setCurrentPositionRightLeft(right, left);
 }
 
 bool Validator::recordMeasurement()
@@ -159,12 +160,13 @@ bool Validator::recordMeasurement()
 
         std::pair<unsigned int, unsigned int> tPos = getTargetPos();
         std::pair<unsigned int, unsigned int> cPos = getCursorPos();
-        std::pair<unsigned int, unsigned int> gPos = getGazePos();
+        std::pair<std::pair<unsigned int, unsigned int>, std::pair<unsigned int, unsigned int> > gPos = getGazePosRightLeft();
 
         if (data->writeData(currTime, getTargetIndex(),
                             tPos.first, tPos.second,
                             cPos.first, cPos.second,
-                            gPos.first, gPos.second))
+                            gPos.first.first, gPos.first.second,
+                            gPos.second.first, gPos.second.second))
         {
             ++testCount[getTargetIndex()];
             success = true;
@@ -297,17 +299,22 @@ void Validator::stopTrackerDataCollector()
 
 std::pair<unsigned int, unsigned int> Validator::getCursorPos() const
 {
-    return cursorPosition->getCurrentPosition();
+    return cursorPosition->getCurrentPositionSingle();
 }
 
 std::pair<unsigned int, unsigned int> Validator::getTargetPos() const
 {
-    return targetPosition->getCurrentPosition();
+    return targetPosition->getCurrentPositionSingle();
 }
 
-std::pair<unsigned int, unsigned int> Validator::getGazePos() const
+std::pair<unsigned int, unsigned int> Validator::getGazePosSingle() const
 {
-    return gazePosition->getCurrentPosition();
+    return gazePosition->getCurrentPositionSingle();
+}
+
+std::pair<std::pair<unsigned int, unsigned int>, std::pair<unsigned int, unsigned int> > Validator::getGazePosRightLeft() const
+{
+    return gazePosition->getCurrentPositionRightLeft();
 }
 
 bool Validator::cursorOverTarget() const
@@ -362,7 +369,7 @@ void Validator::setTargetPos(unsigned int index)
     }
 
     // the target will be in the middle of this cell
-    targetPosition->setCurrentPosition(std::make_pair(xTarget, yTarget));
+    targetPosition->setCurrentPositionSingle(std::make_pair(xTarget, yTarget));
     targetIndex = index;
 }
 

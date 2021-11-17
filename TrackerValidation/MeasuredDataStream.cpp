@@ -17,7 +17,8 @@ MeasuredDataStream::MeasuredDataStream(const std::string &label,
     outStream << "\"Label\",\"Subject\",\"Tracker\",\"Timestamp\",\"Target-ID\","
               << "\"Target-X\",\"Target-Y\","
               << "\"Cursor-X\",\"Cursor-Y\","
-              << "\"Actual-X\",\"Actual-Y\""
+              << "\"Actual-X-Right\",\"Actual-Y-Right\","
+              << "\"Actual-X-Left\",\"Actual-Y-Left\""
               << std::endl;
 }
 
@@ -42,7 +43,8 @@ bool MeasuredDataStream::writeData(
     unsigned int targetNumber,
     unsigned int xTarget, unsigned int yTarget,
     unsigned int xCursor, unsigned int yCursor,
-    unsigned int xActual, unsigned int yActual)
+    unsigned int xActualRight, unsigned int yActualRight,
+    unsigned int xActualLeft, unsigned int yActualLeft)
 {
     // format the timestamp
     std::time_t ts = std::chrono::system_clock::to_time_t(timestamp);
@@ -60,7 +62,8 @@ bool MeasuredDataStream::writeData(
               << targetNumber << ","
               << xTarget << "," << yTarget << ","
               << xCursor << "," << yCursor << ","
-              << xActual << "," << yActual << std::endl;
+              << xActualRight << "," << yActualRight << ","
+              << xActualLeft << "," << yActualLeft << std::endl;
 
     return true;
 }
