@@ -18,7 +18,9 @@
 Validator::Validator(const ValidatorConfig &conf)
     : config(conf), ui(nullptr), data(nullptr),
       showingTarget(false), targetIndex(0),
-      trackerDataCollector(nullptr)
+      trackerDataCollector(nullptr),
+      gazePosThread(nullptr),
+      showGaze(true)
 {
     cursorPosition = new ScreenPositionStore();
     gazePosition = new ScreenPositionStore();
@@ -59,10 +61,19 @@ Validator::Validator(const ValidatorConfig &conf)
     }
 
     valPtr = this;
+
+    gazePosThread = new std::thread(&Validator::collectGazePos, this);
 }
 
 Validator::~Validator()
 {
+    if (gazePosThread != nullptr)
+    {
+        showGaze = false;
+        gazePosThread->join();
+        delete gazePosThread;       gazePosThread = nullptr;
+    }
+
     valPtr = nullptr;
     delete data;                    data = nullptr;
     delete gazePosition;            gazePosition = nullptr;
@@ -70,6 +81,21 @@ Validator::~Validator()
     delete targetPosition;          targetPosition = nullptr;
     delete ui;                      ui = nullptr;
     delete trackerDataCollector;    trackerDataCollector = nullptr;
+}
+
+void Validator::collectGazePos()
+{
+    while (showGaze)
+    {
+        if (ui != nullptr && gazePosition != nullptr)
+        {
+            std::pair<std::pair<unsigned int, unsigned int>, std::pair<unsigned int, unsigned int> >pos
+                = gazePosition->getCurrentPositionRightLeft();
+            ui->setGazePos(pos.first, pos.second);
+            refreshUI();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
 }
 
 // idle function for the UI - processing done when UI drawing not
@@ -84,6 +110,14 @@ void idleFunc(void)
     else
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+}
+
+void Validator::refreshUI()
+{
+    if (ui != nullptr)
+    {
+        ui->refresh();
     }
 }
 

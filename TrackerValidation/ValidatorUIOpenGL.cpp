@@ -43,22 +43,39 @@ void ValidatorUIOpenGL::drawScreen()
         throw std::runtime_error("drawScreen() called before UI was started!");
     }
 
-    // redraw the screen
-    glClear(GL_COLOR_BUFFER_BIT);
+    constexpr int numWindows = sizeof(ui->displayWindows) / sizeof(ui->displayWindows[0]);
+    for (int x = 0; x < numWindows; ++x)
+    {
+        // redraw the screen
+        glutSetWindow(ui->displayWindows[x]);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    if (!ui->inTestRoutine())
-    {
-        ui->showSplashScreen();
-    }
-    else
-    {
-        for (auto pos : ui->currTargetPos)
+        if (!ui->inTestRoutine())
         {
-            ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
+            ui->showSplashScreen();
         }
+        else
+        {
+            for (auto pos : ui->currTargetPos)
+            {
+                ui->drawTarget(pos.first, pos.second, ui->getTargetSize());
+            }
+
+            // show our gaze positions as well on the monitor window
+            if (x != 0)
+            {
+                ui->drawFixation(ui->posRight.first, ui->posRight.second);
+                ui->drawFixation(ui->posLeft.first, ui->posLeft.second);
+            }
+        }
+        glutSwapBuffers();
     }
-    glutSwapBuffers();
+    glutSetWindow(ui->displayWindows[0]);
 }
+
+// screen drawing is being handled by the main drawScreen method
+void ValidatorUIOpenGL::drawScreenMonitor()
+{}
 
 void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
 {
@@ -149,6 +166,26 @@ void ValidatorUIOpenGL::drawTarget(unsigned int x, unsigned int y,
     t->drawOpenGL(x, y);
 }
 
+void ValidatorUIOpenGL::drawFixation(unsigned int x, unsigned int y)
+{
+    std::pair<unsigned int, unsigned int> res = common::getScreenRes();
+
+    if (x <= res.first && y <= res.second)
+    {
+        std::unique_ptr<FixationTarget> t(
+            FixationTarget::create("circle", 10));
+        t->drawOpenGL(x, y);
+    }
+}
+
+void ValidatorUIOpenGL::setGazePos(
+    std::pair<unsigned int, unsigned int> r,
+    std::pair<unsigned int, unsigned int> l)
+{
+    posRight = r;
+    posLeft = l;
+}
+
 // -- end UI static functions --//
 
 ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
@@ -166,10 +203,24 @@ ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
                   GLUT_ACTION_GLUTMAINLOOP_RETURNS);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // double buffering
     glutInitWindowSize(windowRes.first, windowRes.second);
-    glutCreateWindow("Eye Tracker Validator");
-    glutDisplayFunc(this->drawScreen);
+    displayWindows[0] = glutCreateWindow("Eye Tracker Validator");
     glutKeyboardFunc(this->keypress);
-    glutReshapeFunc(this->resize);
+    glutDisplayFunc(this->drawScreen);
+
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,
+        GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // double buffering
+    glutInitWindowSize(windowRes.first, windowRes.second);
+    displayWindows[1] = glutCreateWindow("Eye Tracker Validator :: Monitor");
+    glutDisplayFunc(this->drawScreenMonitor);
+
+    constexpr int numWindows = sizeof(displayWindows) / sizeof(displayWindows[0]);
+    for (int x = 0; x < numWindows; ++x)
+    {
+        glutSetWindow(displayWindows[x]);
+        glutReshapeFunc(this->resize);
+    }
+    glutSetWindow(displayWindows[0]);
     showSplashScreen();
     glutPostRedisplay();
 }
@@ -191,7 +242,16 @@ void ValidatorUIOpenGL::run()
 
 void ValidatorUIOpenGL::stop()
 {
+    fullscreen = false;
     glutLeaveMainLoop();
+}
+
+void ValidatorUIOpenGL::refresh()
+{
+    if (inTestRoutine())
+    {
+        glutPostRedisplay();
+    }
 }
 
 void ValidatorUIOpenGL::showTarget(std::pair<unsigned int, unsigned int> pos,

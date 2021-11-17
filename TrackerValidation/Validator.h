@@ -13,6 +13,7 @@
 
 #include <utility> // for std::pair
 #include <string>
+#include <thread>
 #include <vector>
 
 class Validator
@@ -25,6 +26,11 @@ class Validator
     MeasuredData *data;
 
     TrackerDataCollector *trackerDataCollector;
+
+    // thread for displaying the current gaze position
+    std::thread *gazePosThread;
+    bool showGaze;
+    void collectGazePos();
 
     // Grid dimensions (cols, rows).
     std::pair<unsigned int, unsigned int> dimensions;
@@ -95,6 +101,7 @@ class Validator
     // start/stop the UI
     void startUI(int* argcp, char** argvp);
     void stopUI();
+    void refreshUI();
 
     // start the gaze tracker data collector
     // @throws std::runtime_error if the tracker couldn't start

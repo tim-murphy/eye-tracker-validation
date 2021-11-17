@@ -29,6 +29,10 @@ class ValidatorUI
                             bool drawScreen = true,
                             bool firstTarget = true) = 0;
 
+    // set the gaze position so the UI can (optionally) display it.
+    virtual void setGazePos(std::pair<unsigned int, unsigned int> posRight,
+                            std::pair<unsigned int, unsigned int> posLeft) = 0;
+
     // set the idle routine (main processing)
     virtual void setIdleFunc(void (*func)(void)) = 0;
 
@@ -39,6 +43,7 @@ class ValidatorUI
 
     virtual void run() = 0;
     virtual void stop() = 0;
+    virtual void refresh() = 0;
 
     // Are we currently running the test routine?
     // @ returns true if we are showing fixation targets
