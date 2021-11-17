@@ -36,11 +36,24 @@ file(GLOB SOURCES "*.cpp")
 file(GLOB MAINSRC "TrackerValidation.cpp")
 list(REMOVE_ITEM SOURCES ${MAINSRC})
 
+# Eyelink stuff
+file(GLOB EYELINKLIB "eyelink/eyelink_core64.lib")
+file(GLOB EYELINK_DUMMY "eyelink/dummy.cpp")
+list(APPEND SOURCES ${EYELINK_DUMMY})
+
+if (WIN32)
+    if (EXISTS ${EYELINKLIB})
+        list(APPEND EXELIBS ${CMAKE_SOURCE_DIR}/TrackerValidation/eyelink/eyelink_core64.lib)
+        list(REMOVE_ITEM SOURCES ${EYELINK_DUMMY})
+    endif()
+endif()
+
 set(MAINEXE "TrackerValidation")
 set(SOURCESLIB "validator_static")
 
 # Create a static library of all sources except main - makes testing easier.
 add_library(${SOURCESLIB} STATIC ${SOURCES})
+target_include_directories(${SOURCESLIB} PUBLIC "eyelink")
 
 # Add source to this project's executable.
 add_executable(${MAINEXE} ${MAINSRC})
@@ -48,11 +61,6 @@ list(APPEND EXELIBS ${SOURCESLIB})
 
 add_subdirectory("gazepoint")
 list(APPEND EXELIBS "GPClient")
-
-target_include_directories(${SOURCESLIB} PUBLIC "eyelink")
-if (WIN32)
-    list(APPEND EXELIBS ${CMAKE_SOURCE_DIR}/TrackerValidation/eyelink/eyelink_core64.lib)
-endif()
 
 add_subdirectory("freeglut-3.2.1")
 target_include_directories(${SOURCESLIB} PUBLIC "freeglut-3.2.1/include")
