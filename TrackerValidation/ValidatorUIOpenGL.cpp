@@ -91,7 +91,7 @@ void ValidatorUIOpenGL::keypress(unsigned char key, int, int)
     {
       case 27: // escape key
         std::cout << "Shutting down the test." << std::endl;
-        glutLeaveMainLoop();
+        ui->stop();
         break;
 
       case 32:
