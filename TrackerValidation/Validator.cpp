@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <cstdlib> // for rand()
+#include <ctime> // for time(), used to seed rand()
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -63,6 +64,10 @@ Validator::Validator(const ValidatorConfig &conf)
     valPtr = this;
 
     gazePosThread = new std::thread(&Validator::collectGazePos, this);
+
+    // seed our random number generator, used to determine the order targets
+    // are displayed
+    srand(static_cast<unsigned int>(time(NULL)));
 }
 
 Validator::~Validator()
@@ -305,10 +310,7 @@ void Validator::showTarget()
         }
 
         // Pick a random position which has not been fully tested yet.
-        // Note that we're not seeding the random number generator as it's not
-        // really necessary - we don't care if each participant gets the same
-        // 'random' sequence - and it removes the need for ctime or another
-        // seeding dependency.
+        // This was seeded in the constructor.
         unsigned int randomIndex;
         do
         {
