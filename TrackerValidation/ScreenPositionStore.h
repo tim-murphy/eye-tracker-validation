@@ -27,7 +27,7 @@ class ScreenPositionStore
     std::mutex posMutex;
 
   public:
-      ScreenPositionStore::ScreenPositionStore(
+      ScreenPositionStore(
           std::pair<unsigned int, unsigned int> right
             = std::make_pair(common::invalidCoord, common::invalidCoord),
           std::pair<unsigned int, unsigned int> left
