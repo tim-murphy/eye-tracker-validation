@@ -1,16 +1,19 @@
-default:
-  image: ubuntu:20.04
-  services:
-    - git:1:2.25.1-1ubuntu3.2
-
 stages:
   - build
   - test
 
 all:
   stage: build
+  image: ubuntu:20.04
   script:
-    - uname -a
-    - env
-    - git --version
+    - apt-get update
+    - apt-get install -y git build-essential cmake
+    - apt-get install -y libgl1-mesa-dev libglu1-mesa-dev libxi-dev
+    - cmake .
+    - make
 
+test:
+  stage: test
+  image: ubuntu:20.04
+  script:
+    - apt-get update && apt-get install -y git
