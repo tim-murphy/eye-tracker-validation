@@ -1,4 +1,7 @@
 # Eye Tracker Validation
+If you're looking for software to download, it can be found in the "Releases"
+section on the right. Only a Windows binary is available pre-compiled at the
+moment.
 
 This software is a free, open-source tool which can be used to validate the
 accuracy and precision of an eye tracker system. The tool works on both Windows
