@@ -4,8 +4,8 @@ section on the right. Only a Windows binary is available pre-compiled at the
 moment.
 
 This software is a free, open-source tool which can be used to validate the
-accuracy and precision of an eye tracker system. The tool works on both Windows
-and Linux systems ,and should work with OS-X, though this hasn't been tested.
+accuracy and precision of an eye tracker system. The tool works on Windows
+and should also work on Linux and OS-X, though this hasn't been tested.
 It has been designed to allow new trackers to be easily added and tested with
 minimal coding; the demo programs included with your eye tracker will probably
 contain all the code you need.
