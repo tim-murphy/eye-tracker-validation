@@ -13,6 +13,20 @@ contain all the code you need.
 If you use this tool and add a new tracker, please submit a pull request to
 allow others to make use of your work.
 
+If you use this software for research, please cite the following paper:
+
+    @article{Murphy2022,
+      author = {Murphy, Timothy I and Abel, Larry A and Armitage, James A and Douglass, Amanda G},
+      doi = {10.3758/s13428-022-02023-y},
+      issn = {1554-3528},
+      journal = {Behavior Research Methods},
+      title = {{Effects of tracker location on the accuracy and precision of the Gazepoint GP3 HD for spectacle wearers}},
+      doi = {https://doi.org/10.3758/s13428-022-02023-y},
+      url = {https://link.springer.com/article/10.3758/s13428-022-02023-y},
+      year = {2022}
+    }
+
+
 ## Dependencies
 The number of dependencies has intentionally been kept small to allow the code
 to be built and run with minimal fuss. The build is managed by `cmake`, with UI
