@@ -15,6 +15,8 @@ allow others to make use of your work.
 
 If you use this software for research, please cite the following paper:
 
+https://link.springer.com/article/10.3758/s13428-022-02023-y
+
     @article{Murphy2022,
       author = {Murphy, Timothy I and Abel, Larry A and Armitage, James A and Douglass, Amanda G},
       doi = {10.3758/s13428-022-02023-y},
