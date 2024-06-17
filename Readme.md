@@ -1,4 +1,7 @@
 # Eye Tracker Validation
+
+[![DOI](https://zenodo.org/badge/337347037.svg)](https://zenodo.org/doi/10.5281/zenodo.11884547)
+
 If you're looking for software to download, it can be found in the "Releases"
 section on the right. Only a Windows binary is available pre-compiled at the
 moment.
