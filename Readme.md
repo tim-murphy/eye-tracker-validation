@@ -69,7 +69,7 @@ the following to generate the files:
 
 To compile, run:
 
-```make```
+```cmake --build . --parallel 16 --config Release```
 
 Note that if you don't add/remove any source code, libraries or other
 dependencies, then you only need to run `make` after each code change. If you
