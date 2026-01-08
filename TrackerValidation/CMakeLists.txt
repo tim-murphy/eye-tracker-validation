@@ -1,11 +1,11 @@
 ﻿# CMakeList.txt : CMake project for TrackerValidation, include source and define
 # project specific logic here.
 #
-cmake_minimum_required(VERSION 3.8)
-project(TrackerValidation LANGUAGES CXX VERSION 0.1)
+cmake_minimum_required(VERSION 3.15)
+project(TrackerValidation LANGUAGES CXX VERSION 1.02)
 enable_testing()
 
-add_compile_definitions(FREEGLUT_BUILD_STATIC_LIBS)
+add_compile_definitions(FREEGLUT_BUILD_STATIC_LIBS=ON)
 add_compile_definitions(FREEGLUT_STATIC)
 add_compile_definitions(FREEGLUT_LIB_PRAGMAS=0)
 
@@ -46,6 +46,7 @@ if (WIN32)
         list(APPEND EXELIBS ${CMAKE_SOURCE_DIR}/TrackerValidation/eyelink/eyelink_core64.lib)
         list(REMOVE_ITEM SOURCES ${EYELINK_DUMMY})
     endif()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 set(MAINEXE "TrackerValidation")
