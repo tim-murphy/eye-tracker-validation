@@ -57,19 +57,19 @@ If you don't have `cmake` or C/C++ compilers installed, you'll need these too:
 Since this project uses `cmake`, your build tool can change depending on your
 environment. The default settings are listed below.
 
-### Windows
+### Visual Studio
 From Visual Studio, simply build the target `TrackerValidation`. This will
 generate the build files (`ninja` by default) and run them. Nothing else to do.
 
-### Linux
+### Command line (Linux or Windows)
 `cmake` will generate `Makefile` files by default. From the root directory, run
 the following to generate the files:
 
-```cmake .```
+```cmake -B build -S .```
 
 To compile, run:
 
-```cmake --build . --parallel 16 --config Release```
+```cmake --build build --parallel 16 --config Release```
 
 Note that if you don't add/remove any source code, libraries or other
 dependencies, then you only need to run `make` after each code change. If you
