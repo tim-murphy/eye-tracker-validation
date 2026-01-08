@@ -30,6 +30,7 @@ class ValidatorUIOpenGL : public ValidatorUI
     // Some of these need to be static as they are passed to OpenGL using the
     // C library
     bool fullscreen;
+    bool running;
     static void drawScreen();
     static void drawScreenMonitor();
     static void keypress(unsigned char key, int x, int y);
@@ -77,6 +78,10 @@ class ValidatorUIOpenGL : public ValidatorUI
                     bool drawScreen = true, bool firstTarget = true);
 
     bool inTestRoutine() const;
+    inline bool keepRunning() const
+    {
+        return running;
+    }
 
     // mouseclick event helpers - check if button/state combination is
     // considered a valid mouse click

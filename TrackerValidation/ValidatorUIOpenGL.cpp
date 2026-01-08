@@ -44,7 +44,7 @@ void ValidatorUIOpenGL::drawScreen()
     }
 
     constexpr int numWindows = sizeof(ui->displayWindows) / sizeof(ui->displayWindows[0]);
-    for (int x = 0; x < numWindows; ++x)
+    for (int x = 0; x < numWindows && ui->keepRunning(); ++x)
     {
         // redraw the screen
         glutSetWindow(ui->displayWindows[x]);
@@ -188,12 +188,17 @@ void ValidatorUIOpenGL::setGazePos(
 
 // -- end UI static functions --//
 
+inline void closeCallback()
+{
+    ValidatorUIOpenGL::getInstance()->stop();
+}
+
 ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
                                      const std::string &targetType,
                                      int *argcp, char **argvp,
                                      bool previewMode)
     : ValidatorUI(targetSize, targetType, previewMode),
-      fullscreen(false), currTargetPos()
+      fullscreen(false), running(true), currTargetPos()
 {
     static constexpr std::pair<int, int> windowRes = std::make_pair(640, 480);
 
@@ -213,6 +218,7 @@ ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
     glutInitWindowSize(windowRes.first, windowRes.second);
     displayWindows[1] = glutCreateWindow("Eye Tracker Validator :: Monitor");
     glutDisplayFunc(this->drawScreenMonitor);
+    glutCloseFunc(closeCallback);
 
     constexpr int numWindows = sizeof(displayWindows) / sizeof(displayWindows[0]);
     for (int x = 0; x < numWindows; ++x)
@@ -237,12 +243,14 @@ void ValidatorUIOpenGL::setMouseFunc(void (*func)(int, int, int, int))
 
 void ValidatorUIOpenGL::run()
 {
+    running = true;
     glutMainLoop();
 }
 
 void ValidatorUIOpenGL::stop()
 {
     fullscreen = false;
+    running = false;
     glutLeaveMainLoop();
 }
 
