@@ -229,6 +229,7 @@ ValidatorUIOpenGL::ValidatorUIOpenGL(unsigned int targetSize,
     glutSetWindow(displayWindows[0]);
     showSplashScreen();
     glutPostRedisplay();
+    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
 }
 
 void ValidatorUIOpenGL::setIdleFunc(void (*func)(void))

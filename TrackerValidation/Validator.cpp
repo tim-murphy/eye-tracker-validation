@@ -383,6 +383,11 @@ void Validator::setTargetPos(unsigned int index)
     // from this, define the bounding box based on the screen res.
     std::pair<unsigned int, unsigned int> screenRes = common::getScreenRes();
 
+    // we are zero-indexing, so set the max x- and y- values as one less than
+    // the full screen resolution
+    screenRes.first -= 1;
+    screenRes.second -= 1;
+
     // subtract the padding (x2 as padded on both sides)
     screenRes.first -= (config.padding * 2);
     screenRes.second -= (config.padding * 2);
