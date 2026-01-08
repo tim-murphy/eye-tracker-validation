@@ -1,5 +1,6 @@
 # Eye Tracker Validation
 
+[![CMake on multiple platforms](https://github.com/tim-murphy/eye-tracker-validation/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/tim-murphy/eye-tracker-validation/actions/workflows/cmake-multi-platform.yml)
 [![DOI](https://zenodo.org/badge/337347037.svg)](https://zenodo.org/doi/10.5281/zenodo.11884547)
 
 If you're looking for software to download, it can be found in the "Releases"
